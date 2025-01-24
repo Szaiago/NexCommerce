@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NextCommerce</title>
-    <link rel="icon" href="css/images/logoempresa1.png" type="image/x-icon">
-    <link rel="stylesheet" href="css/index.css">
+    <title>Cadastro - NextCommerce</title>
+    <link rel="icon" href="css/images/logoempresa.png" type="image/x-icon">
+    <link rel="stylesheet" href="css/cadastro.css">
     <script src="js/carrosel-index.js" defer></script>
-    <script src="js/visualizarsenha.js" defer></script>
     <script src="js/logoempresa.js" defer></script>
+    <script src="js/visualizarsenha.js" defer></script>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </head>
@@ -18,17 +18,23 @@
             <div class="logoempresa">
                 <img id="logo" src="css/images/logoempresa1.png" alt="Logo Empresa">
             </div>
-            <h2>Login</h2>
-            <form>
-                <input type="email" placeholder="Email">
+            <h2>Cadastro</h2>
+            <form action="functions/processar_cadastro.php" method="POST">
+                <input type="text" name="nome_usuario" placeholder="Nome completo" required>
+                <input type="email" name="email_usuario" placeholder="Email" required>
                 <div class="password-container">
-                    <input type="password" id="password" placeholder="Password">
-                    <button class="toggle-password" id="togglePassword">
+                    <input type="password" name="senha_usuario" id="password" placeholder="Senha" required>
+                    <button type="button" class="toggle-password" id="togglePassword">
                         <ion-icon name="eye-outline" id="icon"></ion-icon>
                     </button>
                 </div>
-                <button type="submit">Sign up</button>
-                <a href="cadastro.html">Não tem conta? Crie aqui!</a>
+                <div class="password-container">
+                    <input type="password" name="confirm_senha" id="confirmPassword" placeholder="Confirme a senha" required>
+                    <button type="button" class="toggle-password" id="toggleConfirmPassword">
+                        <ion-icon name="eye-outline" id="iconConfirm"></ion-icon>
+                    </button>
+                </div>
+                <button type="submit">Cadastrar</button>
             </form>
         </div>
         <div class="carousel-container">

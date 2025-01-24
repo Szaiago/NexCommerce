@@ -16,25 +16,11 @@ body {
 .container {
     display: flex;
     width: 60%;
-    height: 500px;
+    height: 600px;
     background: white;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     border-radius: 10px;
-    transform: scale(0.5);
-    opacity: 0;
-    animation: growIn 0.8s ease-out forwards;
-}
-
-@keyframes growIn {
-    0% {
-        transform: scale(0.0);
-        opacity: 0;
-    }
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
 }
 
 .logoempresa {
@@ -46,7 +32,6 @@ body {
     justify-content: first baseline;
     align-items: center;
 }
-
 .logoempresa img {
     margin-left: -4vw;
     width: 9vw;
@@ -59,26 +44,6 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    transform: translateX(-100%);
-    opacity: 0;
-    animation: slideInFromLeft 1s ease-out forwards;
-}
-
-@keyframes slideInFromLeft {
-    0% {
-        transform: translatey(200%);
-        opacity: 0;
-    }
-    50% {
-        opacity 0.2;
-    }
-    70% {
-        opacity 0.5;
-    }
-    100% {
-        transform: translatey(0);
-        opacity: 1;
-    }
 }
 
 .form-container h2 {
@@ -111,7 +76,7 @@ body {
     display: flex;
     align-items: center;
     width: 100%;
-    margin: 20px auto;
+    margin: 10px auto;
 }
 
 .password-container input {
@@ -125,9 +90,9 @@ body {
 .password-container .toggle-password {
     position: absolute;
     right: 10px;
+    margin-top: -10px
     cursor: pointer;
     font-size: 20px;
-    margin-top: -10px;
     color: #333;
     background: none;
     border: none;
