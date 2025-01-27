@@ -1,7 +1,7 @@
 const logos = [
-    "css/images/logoempresa1.png",
-    "css/images/logoempresa2.png",
-    "css/images/logoempresa3.png"
+    "css/images/next1.png",
+    "css/images/next2.png",
+    "css/images/next3.png"
 ];
 
 let logoIndex = 0;
