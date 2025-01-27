@@ -24,13 +24,30 @@ $senha_confirm = trim($_POST['confirm_senha']);
 
 // Validar os dados recebidos
 if (empty($nome_usuario) || empty($email_usuario) || empty($senha_usuario) || empty($senha_confirm)) {
-    die("Por favor, preencha todos os campos.");
+    echo "<script>alert('Por favor, preencha todos os campos.'); window.location.href='../pages/cadastro.html';</script>";
+    exit();
 }
 
 // Verificar se as senhas coincidem
 if ($senha_usuario !== $senha_confirm) {
-    die("As senhas não coincidem. Tente novamente.");
+    echo "<script>alert('As senhas não coincidem. Tente novamente.'); window.location.href='../pages/cadastro.html';</script>";
+    exit();
 }
+
+// Verificar se o e-mail já está cadastrado
+$stmt = $conn->prepare("SELECT email_usuario FROM usuario WHERE email_usuario = ?");
+$stmt->bind_param("s", $email_usuario);
+$stmt->execute();
+$stmt->store_result();
+
+if ($stmt->num_rows > 0) {
+    echo "<script>alert('O e-mail informado já está cadastrado. Use outro e-mail.'); window.location.href='../pages/cadastro.html';</script>";
+    $stmt->close();
+    $conn->close();
+    exit();
+}
+
+$stmt->close();
 
 // Hash da senha para maior segurança
 $senha_hashed = password_hash($senha_usuario, PASSWORD_BCRYPT);
@@ -46,7 +63,7 @@ $stmt = $conn->prepare("INSERT INTO usuario (nome_usuario, email_usuario, senha_
 $stmt->bind_param("ssss", $nome_usuario, $email_usuario, $senha_hashed, $email_empresarial_usuario);
 
 if ($stmt->execute()) {
-    echo "Cadastro realizado com sucesso!";
+    echo "<script>alert('Cadastro realizado com sucesso!');</script>";
 
     // Redirecionar o usuário para a página correspondente
     if ($email_empresarial_usuario) {
@@ -56,7 +73,7 @@ if ($stmt->execute()) {
     }
     exit(); // Certificar-se de que o script termina após o redirecionamento
 } else {
-    echo "Erro ao cadastrar: " . $stmt->error;
+    echo "<script>alert('Erro ao cadastrar: " . $stmt->error . "'); window.location.href='../pages/cadastro.html';</script>";
 }
 
 // Fechar a conexão

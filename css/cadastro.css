@@ -37,7 +37,13 @@ body {
     width: 9vw;
     height: 17vh;
 }
-
+.titulo {
+    margin-top: 5vh;
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+    width:100%;
+}
 .form-container {
     flex: 1;
     padding: 40px;
