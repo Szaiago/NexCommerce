@@ -43,7 +43,8 @@ body {
     font-size: 24px;
     color: #333;
     width:100%;
-}
+    border-bottom: 1px solid orangered;
+} 
 .form-container {
     flex: 1;
     padding: 40px;
@@ -96,7 +97,7 @@ body {
 .password-container .toggle-password {
     position: absolute;
     right: 10px;
-    margin-top: -10px
+    margin-top: -10px;
     cursor: pointer;
     font-size: 20px;
     color: #333;
