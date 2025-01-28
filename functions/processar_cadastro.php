@@ -27,14 +27,14 @@ $senha_confirm = trim($_POST['confirm_senha']);
 // Validar os dados recebidos
 if (empty($nome_usuario) || empty($email_usuario) || empty($senha_usuario) || empty($senha_confirm)) {
     $_SESSION['erro'] = "Por favor, preencha todos os campos.";
-    header("Location: ../pages/cadastro.html");
+    header("Location: ../cadastro.php");
     exit();
 }
 
 // Verificar se as senhas coincidem
 if ($senha_usuario !== $senha_confirm) {
     $_SESSION['erro'] = "As senhas não coincidem. Tente novamente.";
-    header("Location: ../pages/cadastro.html");
+    header("Location: ../cadastro.php");
     exit();
 }
 
@@ -45,10 +45,10 @@ $stmt->execute();
 $stmt->store_result();
 
 if ($stmt->num_rows > 0) {
-    $_SESSION['erro'] = "O e-mail informado já está cadastrado. Use outro e-mail.";
+    $_SESSION['erro'] = "Este e-mail já está cadastrado. Por favor, faça login ou use outro e-mail.";
     $stmt->close();
     $conn->close();
-    header("Location: ../pages/cadastro.html");
+    header("Location: ../cadastro.php");
     exit();
 }
 

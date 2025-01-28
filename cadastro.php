@@ -19,7 +19,9 @@
             <div class="logoempresa">
                 <img id="logo" src="css/images/next1.png" alt="Logo Empresa">
             </div>
-            <h2>Cadastro</h2>
+            <div class="titulo">
+                <h2>CADASTRO</h2>
+            </div>
             <div class="alert-erro">
                 <?php
                 if (isset($_SESSION['erro'])) {
@@ -43,14 +45,15 @@
                         <ion-icon name="eye-outline" id="iconConfirm"></ion-icon>
                     </button>
                 </div>
-                <button type="submit">Cadastrar</button>
+                <button type="submit">CADASTRAR</button>
+                <a href="index.php">Já tem uma conta? Faça login aqui!</a>
             </form>
         </div>
         <div class="carousel-container">
             <div class="carousel">
-                <img src="css/images/carroselindex1.jpeg" alt="Slide 1">
-                <img src="css/images/carroselindex2.jpeg" alt="Slide 2">
-                <img src="css/images/carroselindex3.jpeg" alt="Slide 3">
+                <img src="css/images/carroselindex4.jpeg" alt="Slide 1">
+                <img src="css/images/carroselindex5.jpeg" alt="Slide 2">
+                <img src="css/images/carroselindex6.jpeg" alt="Slide 3">
             </div>
             <div class="carousel-indicators">
                 <div class="indicator active" data-slide="0"></div>

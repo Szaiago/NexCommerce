@@ -21,16 +21,24 @@
             <div class="titulo">
                 <h2>LOGIN</h2>
             </div>
-            <form>
-                <input type="email" placeholder="Email">
+            <div class="alert-erro">
+                <?php
+                if (isset($_SESSION['LOGIN-ERRO'])) {  // Verificar se há erro
+                    echo "<p>" . $_SESSION['LOGIN-ERRO'] . "</p>";  // Exibir erro
+                    unset($_SESSION['LOGIN-ERRO']);  // Limpar a mensagem após exibição
+                }
+                ?>
+            </div>
+            <form action="functions/processar_login.php" method="POST">
+                <input type="email" name="email" placeholder="Email" required>
                 <div class="password-container">
-                    <input type="password" id="password" placeholder="Password">
-                    <button class="toggle-password" id="togglePassword">
-                        <ion-icon name="eye-outline" id="icon"></ion-icon>
+                    <input type="password" name="password" id="password" placeholder="Password" required>
+                    <button type="button" class="toggle-password" id="togglePassword">
+                    <ion-icon name="eye-outline" id="icon"></ion-icon>
                     </button>
                 </div>
-                <button type="submit">Sign up</button>
-                <a href="cadastro.html">Não tem conta? Crie aqui!</a>
+                <button type="submit">ENTRAR</button>
+                <a href="cadastro.php">Não tem conta? Cadastre-se agora!</a>
             </form>
         </div>
         <div class="carousel-container">

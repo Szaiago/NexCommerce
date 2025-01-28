@@ -1,0 +1,38 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    height: auto;
+    display: flexbox;
+    flex-direction: column;
+    width: 100vw;
+    height: auto;
+    min-height: 100vh;
+    background-color: #eeeeee;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
+}
+.main {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    width: 100vw;
+    height: 13vh;
+    background-color: white;
+    border-bottom:1px solid #f0f0f0;
+}
+.logo-main {
+    width: 70%;
+    height: 13vh;
+}
+
+.logo-main img {
+    margin-top: -11.5vh;
+    width: 20vw;
+    height: 35vh;
+}

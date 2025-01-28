@@ -11,6 +11,10 @@ body {
     background-color: #f0f0f0;
     justify-content: center;
     align-items: center;
+    background-image: url('../css/images/background.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .container {
@@ -164,13 +168,13 @@ body {
 
 @keyframes singup {
     0% {
-        transform: scale(0.9);
+        transform: scale(0.95);
     }
     50% {
         transform: scale(1);
     }
     100% {
-        transform: scale(0.9);
+        transform: scale(0.95);
     }
 }
 
@@ -179,8 +183,9 @@ body {
     text-align: center;
     color: orangered;
     text-decoration: none;
-    font-size: 14px;
+    font-size: 12px;
     animation: criarconta 15s infinite;
+    text-transform: uppercase;
 }
 @keyframes criarconta {
     0% {
@@ -233,3 +238,40 @@ body {
 .indicator.active {
     background: black;
 }
+.alert-erro {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+    font-size: 12px;
+    text-transform: uppercase;
+    animation: erro 1.5s ease-out forwards;
+    animation: desaparecer 10s ease-out forwards;
+}
+@keyframes erro {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+@keyframes desaparecer {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 0;
+        display: none;
+    }
+}
+
