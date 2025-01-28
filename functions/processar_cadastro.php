@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 // Conexão com o banco de dados
 $host = "localhost";
 $usuario = "root";
@@ -24,13 +26,15 @@ $senha_confirm = trim($_POST['confirm_senha']);
 
 // Validar os dados recebidos
 if (empty($nome_usuario) || empty($email_usuario) || empty($senha_usuario) || empty($senha_confirm)) {
-    echo "<script>alert('Por favor, preencha todos os campos.'); window.location.href='../pages/cadastro.html';</script>";
+    $_SESSION['erro'] = "Por favor, preencha todos os campos.";
+    header("Location: ../pages/cadastro.html");
     exit();
 }
 
 // Verificar se as senhas coincidem
 if ($senha_usuario !== $senha_confirm) {
-    echo "<script>alert('As senhas não coincidem. Tente novamente.'); window.location.href='../pages/cadastro.html';</script>";
+    $_SESSION['erro'] = "As senhas não coincidem. Tente novamente.";
+    header("Location: ../pages/cadastro.html");
     exit();
 }
 
@@ -41,9 +45,10 @@ $stmt->execute();
 $stmt->store_result();
 
 if ($stmt->num_rows > 0) {
-    echo "<script>alert('O e-mail informado já está cadastrado. Use outro e-mail.'); window.location.href='../pages/cadastro.html';</script>";
+    $_SESSION['erro'] = "O e-mail informado já está cadastrado. Use outro e-mail.";
     $stmt->close();
     $conn->close();
+    header("Location: ../pages/cadastro.html");
     exit();
 }
 
@@ -63,17 +68,18 @@ $stmt = $conn->prepare("INSERT INTO usuario (nome_usuario, email_usuario, senha_
 $stmt->bind_param("ssss", $nome_usuario, $email_usuario, $senha_hashed, $email_empresarial_usuario);
 
 if ($stmt->execute()) {
-    echo "<script>alert('Cadastro realizado com sucesso!');</script>";
-
+    $_SESSION['sucesso'] = "Cadastro realizado com sucesso!";
     // Redirecionar o usuário para a página correspondente
     if ($email_empresarial_usuario) {
         header("Location: ../pages/sistema_empresarial.php");
     } else {
         header("Location: ../pages/sistema_pessoal.php");
     }
-    exit(); // Certificar-se de que o script termina após o redirecionamento
+    exit();
 } else {
-    echo "<script>alert('Erro ao cadastrar: " . $stmt->error . "'); window.location.href='../pages/cadastro.html';</script>";
+    $_SESSION['erro'] = "Erro ao cadastrar: " . $stmt->error;
+    header("Location: ../pages/cadastro.html");
+    exit();
 }
 
 // Fechar a conexão

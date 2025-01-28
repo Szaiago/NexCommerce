@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,7 +20,14 @@
                 <img id="logo" src="css/images/next1.png" alt="Logo Empresa">
             </div>
             <h2>Cadastro</h2>
-            <div class="alert-erro"></div>
+            <div class="alert-erro">
+                <?php
+                if (isset($_SESSION['erro'])) {
+                    echo "<p>" . $_SESSION['erro'] . "</p>";
+                    unset($_SESSION['erro']); // Limpar mensagem após exibição
+                }
+                ?>
+            </div>
             <form action="functions/processar_cadastro.php" method="POST">
                 <input type="text" name="nome_usuario" placeholder="Nome completo" required>
                 <input type="email" name="email_usuario" placeholder="Email" required>
