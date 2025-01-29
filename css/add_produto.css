@@ -1,0 +1,116 @@
+.carrosel-produtos-img {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 10px;
+    justify-content: center;
+    width: 100vw;
+    scroll-snap-type: x mandatory;
+}
+
+.carrosel-container {
+    width: 40vw;
+    height: 40vh;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    cursor: pointer;
+    position: relative;
+    scroll-snap-align: center;
+}
+
+.upload-btn {
+    background: rgba(0, 0, 0, 0.339);
+    color: white;
+    border: none;
+    width: 70px; /* Tamanho ajustado */
+    height: 70px; /* Tamanho ajustado */
+    border-radius: 50%; /* Torna o botão circular */
+    cursor: pointer;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%); /* Centraliza o botão */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+}
+.ajustar-forms {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: first baseline;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+.titulo-forms {
+    display: flex;
+    flex-direction: row;
+    justify-content: first baseline;
+    align-items: center;
+    width: 100%;
+    height: 10vh;
+    font-size: 25px;
+    text-transform: uppercase;
+    border-bottom: 2px solid rgb(40, 40, 40);
+    animation: borderbottom 3s ease-out;
+}
+
+@keyframes borderbottom {
+    0% {
+        width: 25%;
+        border-bottom: 2px solid rgb(40, 40, 40);
+    }
+    100% {
+        width: 100%;
+        border-bottom: 2px solid rgb(40, 40, 40);
+        transition: 1s;
+    }
+}
+
+.inputs-produtos {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+    background-color: #fff;
+}
+
+.inputs-produtos:focus {
+    border-color: #5c9ded;
+    outline: none;
+}
+
+textarea {
+    width: 100%;
+    height: 150px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+    background-color: #fff;
+}
+
+/* Estilo para o botão de envio */
+button[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #45a049;
+}

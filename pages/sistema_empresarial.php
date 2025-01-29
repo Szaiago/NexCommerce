@@ -1,4 +1,4 @@
-<?php
+<a?php
 session_start();
 
 if (!isset($_SESSION['nome_usuario'])) {
@@ -22,7 +22,7 @@ if (isset($nome_partes[1])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NextCommerce</title>
+    <title>Home/NextCommerce</title>
     <link rel="icon" href="../css/images/next1.png" type="image/x-icon">
     <link rel="stylesheet" href="../css/fixo.css">
     <link rel="stylesheet" href="../css/home.css">
@@ -71,7 +71,7 @@ if (isset($nome_partes[1])) {
       <i class="material-icons md-36 toggleBtn closeBtn">close</i>
     </div>
     <div class="btn">
-        <i class="bi bi-plus-circle"></i>
+        <a href="adicionar-produto.php"><i class="bi bi-plus-circle"></i></a>
     </div>
     <div class="btn"  style="display:none;">
       <i class="material-icons md-36">photo</i>
@@ -91,7 +91,7 @@ if (isset($nome_partes[1])) {
     <div class="btn">
         <i class="bi bi-box-seam"></i>
     </div>
-    <div class="btn">
+    <div class="btn">               
         <i class="bi bi-pencil-square"></i>
     </div>
   </label>
