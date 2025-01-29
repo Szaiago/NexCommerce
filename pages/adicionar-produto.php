@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+// Verificando se o usuário está logado
 if (!isset($_SESSION['nome_usuario'])) {
     header("Location: ../index.php");
     exit();
@@ -14,19 +15,41 @@ if (isset($nome_partes[1])) {
     $nome_exibido .= " " . $nome_partes[1];
 }
 
+// Conexão com o banco de dados
+$conn = new mysqli('localhost', 'root', '', 'NextCommerce');
+if ($conn->connect_error) {
+    die("Falha na conexão: " . $conn->connect_error);
+}
+
 // Verificando se o formulário foi submetido
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nome_produto = $_POST['nome_produto'];
     $marca_produto = $_POST['marca_produto'];
-    $sku_produto = $_POST['sku_produto'];
     $cor_produto = $_POST['cor_produto'];
     $valor_produto = $_POST['valor_produto'];
     $categoria_produto = $_POST['categoria_produto'];
     $peso_produto = $_POST['peso_produto'];
-    $avaliacao_produto = $_POST['avaliacao_produto'];
-    $quantidade_produto = $_POST['quantidade_produto'];
     $descricao_produto = $_POST['descricao_produto'];
-    
+    $material_produto = $_POST['material_produto'];  // Captura o valor do novo campo
+
+    // Verificando se o nome do produto já existe
+    $sql_check = "SELECT * FROM produtos WHERE nome_produto = ?";
+    $stmt_check = $conn->prepare($sql_check);
+    $stmt_check->bind_param('s', $nome_produto);
+    $stmt_check->execute();
+    $result_check = $stmt_check->get_result();
+
+    if ($result_check->num_rows > 0) {
+        echo "Produto com esse nome já existe. Por favor, escolha outro nome.";
+        exit(); // Não executa o resto do código se o produto já existir
+    }
+
+    // Gerar SKU automaticamente
+    $sku_produto = strtoupper(uniqid('SKU_'));
+
+    // Quantidade inicial definida como 0
+    $quantidade_produto = 0;
+
     // Processando imagens
     $imagens = [];
     for ($i = 1; $i <= 5; $i++) {
@@ -41,19 +64,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    // Salvar os dados no banco (exemplo básico)
-    $conn = new mysqli('localhost', 'usuario', 'senha', 'nextcommerce');
-    if ($conn->connect_error) {
-        die("Falha na conexão: " . $conn->connect_error);
-    }
-
-    $sql = "INSERT INTO produtos (nome_produto, marca_produto, sku_produto, cor_produto, valor_produto, categoria_produto, peso_produto, avaliacao_produto, quantidade_produto, descricao_produto, img1_produto, img2_produto, img3_produto, img4_produto, img5_produto) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    // SQL para inserir o produto, agora incluindo material_produto
+    $sql = "INSERT INTO produtos (nome_produto, marca_produto, sku_produto, cor_produto, valor_produto, categoria_produto, peso_produto, quantidade_produto, descricao_produto, material_produto, img1_produto, img2_produto, img3_produto, img4_produto, img5_produto) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssdsdssssssss", $nome_produto, $marca_produto, $sku_produto, $cor_produto, $valor_produto, $categoria_produto, $peso_produto, $avaliacao_produto, $quantidade_produto, $descricao_produto, $imagens['img1_produto'], $imagens['img2_produto'], $imagens['img3_produto'], $imagens['img4_produto'], $imagens['img5_produto']);
+    $stmt->bind_param(
+        'ssssdsdssssssss', 
+        $nome_produto, 
+        $marca_produto, 
+        $sku_produto, 
+        $cor_produto, 
+        $valor_produto, 
+        $categoria_produto, 
+        $peso_produto, 
+        $quantidade_produto, 
+        $descricao_produto, 
+        $material_produto,  // Adicionado aqui
+        $imagens['img1_produto'], 
+        $imagens['img2_produto'], 
+        $imagens['img3_produto'], 
+        $imagens['img4_produto'], 
+        $imagens['img5_produto']
+    );
 
+    // Executando a consulta
     if ($stmt->execute()) {
         echo "Produto adicionado com sucesso!";
+        // Redirecionar após o envio para evitar o reenvio do formulário
+        header("Location: adicionar-produto.php");
+        exit();
     } else {
         echo "Erro ao adicionar produto: " . $stmt->error;
     }
@@ -68,7 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Produto / NextCommerce</title>
+    <title>Adicionar Produto / NextCommerce</title>
     <link rel="icon" href="../css/images/next1.png" type="image/x-icon">
     <link rel="stylesheet" href="../css/add_produto.css">
     <link rel="stylesheet" href="../css/fixo.css">
@@ -77,6 +117,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="../js/logoempresamain.js" defer></script>
     <script src="../js/modalperfil.js" defer></script>
     <script src="../js/carrosel-home.js" defer></script>
+    <script src="../js/mascarainputs.js" defer></script>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </head>
@@ -133,36 +174,72 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="titulo-forms">
             <p>CADASTRAR PRODUTO</p>
         </div>
-    <label for="nome_produto">NOME DO PRODUTO:</label>
-    <input type="text" name="nome_produto"  class="inputs-produtos" required>
+        <div class="nome_produto">
+            <label for="nome_produto">TÍTULO</label>
+            <input type="text" name="nome_produto" class="inputs-produtos" required>
+        </div>
+        <div class="info-organizar">
+            <div class="marca_produto">
+                <label for="marca_produto">MARCA</label>
+                <input type="text" name="marca_produto" class="inputs-produtos" required>
+            </div>
+            <div class="cor_produto">
+                <label for="cor_produto">COR</label>
+                <select name="cor_produto" class="inputs-produtos">
+                    <option value="" disabled selected>SELECIONE UMA COR</option>
+                    <option value="vermelho">VERMELHO</option>
+                    <option value="azul">AZUL</option>
+                    <option value="verde">VERDE</option>
+                    <option value="amarelo">AMARELO</option>
+                    <option value="preto">PRETO</option>
+                    <option value="branco">BRANCO</option>
+                    <option value="rosa">ROSA</option>
+                    <option value="roxo">ROXO</option>
+                    <option value="laranja">LARANJA</option>
+                    <option value="cinza">CINZA</option>
+                    <option value="bege">BEGE</option>
+                </select>
+            </div>
+        </div>
+        <div class="info-organizar">
+        <div class="categoria_produto">
+            <label for="categoria_produto">CATEGORIA</label>
+            <select name="categoria_produto" class="inputs-produtos" required>
+                <option value="" disabled selected>SELECIONE UMA CATEGORIA</option>
+                <option value="roupas">ROUPAS</option>
+                <option value="eletronicos">ELETRÔNICOS</option>
+                <option value="beleza">BELEZA</option>
+                <option value="alimentos">ALIMENTOS</option>
+                <option value="casa">CASA</option>
+                <option value="decoracao">DECORAÇÃO</option>
+                <option value="brinquedos">BRINQUEDOS</option>
+                <option value="livros">LIVROS</option>
+                <option value="esportes">ESPORTES E LAZER</option>
+                <option value="saude">SAÚDE</option>
+                <option value="tecnologia">TECNOLOGIA</option>
+            </select>
+        </div>
+            <div class="material_produto">
+                <label for="material_produto">MATERIAL</label>
+                <input type="text" name="material_produto" class="inputs-produtos" required>
+            </div>
+        </div>
+        <div class="info-organizar">
+            <div class="peso_produto">
+                <label for="peso_produto">PESO (G)</label>
+                <input type="text" name="peso_produto" class="inputs-produtos" id="peso_produto" required>
+            </div>
+            <div class="valor_produto">
+                <label for="valor_produto">VALOR</label>
+                <input type="text" name="valor_produto" class="inputs-produtos" id="valor_produto" required>
+            </div>
+        </div>
+        <div class="descricao_produto">
+            <label for="descricao_produto">DESCRIÇÃO</label>
+            <textarea name="descricao_produto"></textarea>
+        </div>
 
-    <label for="marca_produto">Marca:</label>
-    <input type="text" name="marca_produto" class="inputs-produtos" required>
-
-    <label for="sku_produto">SKU:</label>
-    <input type="text" name="sku_produto" class="inputs-produtos" required>
-
-    <label for="cor_produto">Cor:</label>
-    <input type="text" name="cor_produto" class="inputs-produtos">
-
-    <label for="valor_produto">Valor:</label>
-    <input type="number" step="0.01" name="valor_produto" class="inputs-produtos" required>
-
-    <label for="categoria_produto">Categoria:</label>
-    <input type="text" name="categoria_produto" class="inputs-produtos" required>
-
-    <label for="peso_produto">Peso:</label>
-    <input type="number" step="0.01" name="peso_produto" class="inputs-produtos">
-
-    <label for="avaliacao_produto">Avaliação:</label>
-    <input type="number" step="0.01" name="avaliacao_produto" class="inputs-produtos">
-
-    <label for="quantidade_produto">Quantidade:</label>
-    <input type="number" name="quantidade_produto" class="inputs-produtos" required>
-
-    <label for="descricao_produto">Descrição:</label>
-    <textarea name="descricao_produto"></textarea>
-    <button type="submit">Adicionar Produto</button>
+        <button type="submit" class="salvar_produto">ADICIONAR PRODUTO</button>
     </div>  
 </form>
 <div class="menu">

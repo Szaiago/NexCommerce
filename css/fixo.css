@@ -6,17 +6,31 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
-    height: auto;
-    display: flexbox;
-    flex-direction: column;
-    width: 100vw;
-    height: auto;
-    min-height: 100vh;
-    background-color: #eeeeee;
-    justify-content: center;
-    align-items: center;
-    overflow-x: hidden;
+  font-family: Arial, sans-serif;
+  height: auto;
+  display: flexbox;
+  flex-direction: column;
+  width: 100vw;
+  height: auto;
+  min-height: 100vh;
+  background-color: #eeeeee;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+}
+
+/* Para navegadores WebKit (Chrome, Safari) */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: white;
+}
+
+::-webkit-scrollbar-thumb {
+    background: white;
+    border-radius: 10px;
 }
 .main {
     display: flex;
@@ -188,7 +202,7 @@ body {
 .modal.show {
     display: block;
 }
-input {position: absolute; display: none}
+.menu input {position: fixed; display: none}
 
 * {
   -webkit-touch-callout: none;
@@ -204,6 +218,7 @@ input {position: absolute; display: none}
   left: 95%;
   margin-left: -25px;
   margin-top: -25px;
+  position: fixed;
 }
 
 .btn {

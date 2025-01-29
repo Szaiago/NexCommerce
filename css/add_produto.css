@@ -6,7 +6,18 @@
     justify-content: center;
     width: 100vw;
     scroll-snap-type: x mandatory;
+    animation: slideFromLeft 1s ease-out forwards;  /* Aplicando a animação */
 }
+
+@keyframes slideFromLeft {
+    0% {
+        transform: translateX(-100%);  /* Começa fora da tela à esquerda */
+    }
+    100% {
+        transform: translateX(0);  /* Termina no lugar original */
+    }
+}
+
 
 .carrosel-container {
     width: 40vw;
@@ -57,6 +68,7 @@
     height: 10vh;
     font-size: 25px;
     text-transform: uppercase;
+    color:rgb(40, 40, 40);
     border-bottom: 2px solid rgb(40, 40, 40);
     animation: borderbottom 3s ease-out;
 }
@@ -72,7 +84,69 @@
         transition: 1s;
     }
 }
+.nome_produto {
+    width: 100%;
+    height: 10vh;
+    margin-top: 2vh;
+    text-transform: uppercase;
+    animation-delay: 0.2s;
+}
+.info-organizar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 10vh;
+    text-transform: uppercase;
+    margin-top: 2vh;
+}
+.marca_produto {
+    width: 68%;
+    animation-delay: 0.4s;
+}
+.cor_produto {
+    width: 30%;
+    animation-delay: 0.4s;
+}
+.categoria_produto {
+    width: 68%;
+    animation-delay: 0.6s;
+}
+.material_produto {
+    width: 30%;
+    animation-delay: 0.6s;
+}
+.peso_produto {
+    width: 27%;
+    animation-delay: 0.8s;
+}
+.valor_produto {
+    width: 71%;
+    animation-delay: 0.8s;
+}
+.descricao_produto {
+    width: 100%;
+    height: 10vh;
+    margin-top: 2vh;
+    text-transform: uppercase;
+    animation-delay: 1s;
+}
+.nome_produto, .info-organizar, .marca_produto, .cor_produto, .categoria_produto, .material_produto, .peso_produto, .valor_produto, .descricao_produto {
+    animation: slideUp 1s ease-out forwards; /* Aplicando a animação */
+    opacity: 0;  /* Inicialmente invisível */
+}
 
+@keyframes slideUp {
+    0% {
+        transform: translateY(50px);  /* Começa 50px abaixo da posição final */
+        opacity: 0;  /* Inicialmente invisível */
+    }
+    100% {
+        transform: translateY(0);  /* Vai para a posição original */
+        opacity: 1;  /* Torna-se visível */
+    }
+}
 .inputs-produtos {
     width: 100%;
     padding: 10px;
@@ -93,24 +167,30 @@ textarea {
     width: 100%;
     height: 150px;
     padding: 10px;
+    margin-top: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
     box-sizing: border-box;
     background-color: #fff;
 }
-
-/* Estilo para o botão de envio */
-button[type="submit"] {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
+textarea:focus {
+    border-color: #5c9ded;
+    outline: none;
 }
-
-button[type="submit"]:hover {
-    background-color: #45a049;
+.salvar_produto {
+    cursor: pointer;
+    width: 100%;
+    height: 7vh;
+    margin-top: 20vh;
+    margin-bottom: 5vh;
+    background-color: #5c9ded;
+    border: none;
+    color:white;
+    border-radius: 5px;
+    transition: 1s;
+}
+.salvar_produto:hover {
+    transition: 1s;
+    background-color: #87b7f0;
 }
