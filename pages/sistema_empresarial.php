@@ -98,7 +98,7 @@ if (isset($nome_partes[1])) {
 </div>
 <div class="carousel-container">
     <div class="carousel">
-        <img src="../css/images/banner1.jpg" alt="Slide 1" style="min-width:100vw;">
+        <img src="../css/images/banner1.gif" alt="Slide 1" style="min-width:100vw;">
         <img src="../css/images/banner2.jpg" alt="Slide 2" style="min-width:100vw;">
         <img src="../css/images/banner3.jpg" alt="Slide 3" style="min-width:100vw;">
     </div>
