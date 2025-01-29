@@ -1,0 +1,52 @@
+.carousel-container {
+    width: 100vw; /* Largura de 100% da tela */
+    height: 70vh; /* Altura de 40% da altura da tela */
+    overflow: hidden;
+    position: relative;
+    animation: growIn 0.8s ease-out forwards;
+}
+
+@keyframes growIn {
+    0% {
+        transform: scale(0.0);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.carousel {
+    width: 100vw;
+    display: flex;
+    transition: transform 0.5s ease;
+}
+
+.carousel img {
+    width: 100vw;
+    height: 70vh;
+    object-fit: cover; /* As imagens preenchem o carrossel sem deformar */
+}
+
+/* Indicadores do carrossel */
+.carousel-indicators {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 5px;
+}
+
+.indicator {
+    width: 10px;
+    height: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.indicator.active {
+    background-color: rgba(0, 0, 0, 1);
+}
