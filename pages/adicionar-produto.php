@@ -21,12 +21,15 @@ if ($conn->connect_error) {
     die("Falha na conexão: " . $conn->connect_error);
 }
 
+// Variável para armazenar a mensagem de status
+$mensagem = '';
+
 // Verificando se o formulário foi submetido
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nome_produto = $_POST['nome_produto'];
     $marca_produto = $_POST['marca_produto'];
     $cor_produto = $_POST['cor_produto'];
-    
+
     // Ajustando o formato do valor antes de salvar
     $valor_produto = str_replace(['R$', ','], ['', '.'], $_POST['valor_produto']);
     $valor_produto = floatval($valor_produto);
@@ -44,69 +47,64 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $result_check = $stmt_check->get_result();
 
     if ($result_check->num_rows > 0) {
-        echo "Produto com esse nome já existe. Por favor, escolha outro nome.";
-        exit();
-    }
-
-    // Gerar SKU automaticamente
-    $sku_produto = strtoupper(uniqid('SKU_'));
-
-    // Quantidade inicial definida como 0
-    $quantidade_produto = 0;
-
-    // Processando imagens
-    $imagens = [];
-    for ($i = 1; $i <= 5; $i++) {
-        if (isset($_FILES["img{$i}_produto"]) && $_FILES["img{$i}_produto"]["error"] == 0) {
-            $extensao = pathinfo($_FILES["img{$i}_produto"]["name"], PATHINFO_EXTENSION);
-            $nome_imagem = "img{$i}_" . time() . "." . $extensao;
-            $caminho_imagem = "../images/" . $nome_imagem;
-            move_uploaded_file($_FILES["img{$i}_produto"]["tmp_name"], $caminho_imagem);
-            $imagens["img{$i}_produto"] = $caminho_imagem;
-        } else {
-            $imagens["img{$i}_produto"] = '';  // Caso não tenha imagem
-        }
-    }
-
-    // SQL para inserir o produto
-    $sql = "INSERT INTO produtos (nome_produto, marca_produto, sku_produto, cor_produto, valor_produto, categoria_produto, peso_produto, quantidade_produto, descricao_produto, material_produto, img1_produto, img2_produto, img3_produto, img4_produto, img5_produto) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param(
-        'ssssdsdssssssss', 
-        $nome_produto, 
-        $marca_produto, 
-        $sku_produto, 
-        $cor_produto, 
-        $valor_produto, 
-        $categoria_produto, 
-        $peso_produto, 
-        $quantidade_produto, 
-        $descricao_produto, 
-        $material_produto,
-        $imagens['img1_produto'], 
-        $imagens['img2_produto'], 
-        $imagens['img3_produto'], 
-        $imagens['img4_produto'], 
-        $imagens['img5_produto']
-    );
-
-    // Executando a consulta
-    if ($stmt->execute()) {
-        echo "Produto adicionado com sucesso!";
-        header("Location: adicionar-produto.php?success=1");
-        exit();
+        $mensagem = "Produto com esse nome já existe. Por favor, escolha outro nome.";
     } else {
-        echo "Erro ao adicionar produto: " . $stmt->error;
-    }
+        // Gerar SKU automaticamente
+        $sku_produto = strtoupper(uniqid('SKU_'));
 
-    $stmt->close();
-    $conn->close();
+        // Quantidade inicial definida como 0
+        $quantidade_produto = 0;
+
+        // Processando imagens
+        $imagens = [];
+        for ($i = 1; $i <= 5; $i++) {
+            if (isset($_FILES["img{$i}_produto"]) && $_FILES["img{$i}_produto"]["error"] == 0) {
+                $extensao = pathinfo($_FILES["img{$i}_produto"]["name"], PATHINFO_EXTENSION);
+                $nome_imagem = "img{$i}_" . time() . "." . $extensao;
+                $caminho_imagem = "../images/" . $nome_imagem;
+                move_uploaded_file($_FILES["img{$i}_produto"]["tmp_name"], $caminho_imagem);
+                $imagens["img{$i}_produto"] = $caminho_imagem;
+            } else {
+                $imagens["img{$i}_produto"] = '';  // Caso não tenha imagem
+            }
+        }
+
+        // SQL para inserir o produto
+        $sql = "INSERT INTO produtos (nome_produto, marca_produto, sku_produto, cor_produto, valor_produto, categoria_produto, peso_produto, quantidade_produto, descricao_produto, material_produto, img1_produto, img2_produto, img3_produto, img4_produto, img5_produto) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param(
+            'ssssdsdssssssss', 
+            $nome_produto, 
+            $marca_produto, 
+            $sku_produto, 
+            $cor_produto, 
+            $valor_produto, 
+            $categoria_produto, 
+            $peso_produto, 
+            $quantidade_produto, 
+            $descricao_produto, 
+            $material_produto,
+            $imagens['img1_produto'], 
+            $imagens['img2_produto'], 
+            $imagens['img3_produto'], 
+            $imagens['img4_produto'], 
+            $imagens['img5_produto']
+        );
+
+        // Executando a consulta
+        if ($stmt->execute()) {
+            $mensagem = "Produto adicionado com sucesso!";
+        } else {
+            $mensagem = "Erro ao adicionar produto: " . $stmt->error;
+        }
+
+        $stmt->close();
+        $conn->close();
+    }
 }
 ?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -155,7 +153,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </form>
         </div>
     </div>
-
+    <div class="situacao">
+        <?php echo $mensagem; ?>
+    </div>
     <form action="" method="POST" enctype="multipart/form-data" class="inputs-cadastrar-produto">
     <div class="carrosel-produtos-img">
         <?php
@@ -246,15 +246,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <button type="submit" class="salvar_produto">ADICIONAR PRODUTO</button>
     </div>  
-    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-        <div class="modal-footer">
-            <button type="button" class="btn btn-success" data-bs-dismiss="modal"><i class="bi bi-x"></i></button>
-        </div>
-        <div class="confirmado">
-            <i class="bi bi-patch-check"></i>
-            <p>CADASTRADO!</p>
-        </div>
-    </div>
 </form>
 <div class="menu">
   <input type="checkbox" id="toggle" />
@@ -289,7 +280,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
   </label>
 </div>
-
 </body>
 <script>
 document.querySelectorAll('.input-file').forEach(input => {
@@ -306,21 +296,4 @@ document.querySelectorAll('.input-file').forEach(input => {
     });
 });
 </script>
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('success')) {
-        var successModal = new bootstrap.Modal(document.getElementById('successModal'));
-        successModal.show();
-    }
-});
-</script>
-<script>
-    // Adiciona a classe "ativo" ao ícone após um pequeno delay
-    setTimeout(() => {
-        document.querySelector('.confirmado i').classList.add('ativo');
-    }, 100); // Pequeno atraso para garantir que a transição ocorra
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 </html>

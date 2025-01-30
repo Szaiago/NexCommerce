@@ -196,82 +196,14 @@ textarea:focus {
     transition: 1s;
     background-color: #87b7f0;
 }
-#successModal {
-    top: 25%;
-    left:35%;
-    width: 400px;
-    height: 250px;
-    display: flex;
-    flex-direction: column;
-    justify-content: first baseline;
-    align-items: center;
-    animation: fehcarase-out forwards;
-}
-
-@keyframes fecharmodal {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(0);
-        opacity: 0;
-    }
-}
-
-.modal-footer {
+.situacao {
+    width: 100%;
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
-    width: 100%;
+    justify-content: center;
+    align-items: center;
     height: 7vh;
-}
-.modal-footer button {
-    width: 3vw;
-    height: 6vh;
-    background-color: white;
-    border: none;
-    border-radius: 50% 50% 50% 0;
-    top: -17%;
-    left: 101%;
-    border: 1px white;
-    transition: 1s;
-}
-.modal-footer button:hover {
-    transition: 1s;
-    color: green;
-}
-.confirmado {
-    margin-top: -3vh;
-}
-.confirmado p {
-    color: gray;
-    margin-top: 15px;
-    font-size: 30px;
-    text-decoration: none;
+    color: rgb(29, 29, 29);
+    font-family: 20px;
     text-transform: uppercase;
-    animation: confirmed 1s ease-out forwards;
-    font-family:monospace
-}
-.confirmado i {
-    color: gray;
-    transition: color 2s ease-in-out;
-    font-size: 100px;
-    animation: confirmed 3s ease-out forwards;
-}
-
-.confirmado i.ativo {
-    color: green;
-}
-
-@keyframes confirmed {
-    0% {
-        transform: scale(0.0);
-        opacity: 0;
-    }
-    100% {
-        transform: scale(1);
-        opacity: 1;
-        color: rgb(0, 77, 0);
-    }
 }
