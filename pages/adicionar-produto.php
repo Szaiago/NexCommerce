@@ -26,11 +26,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nome_produto = $_POST['nome_produto'];
     $marca_produto = $_POST['marca_produto'];
     $cor_produto = $_POST['cor_produto'];
-    $valor_produto = $_POST['valor_produto'];
+    
+    // Ajustando o formato do valor antes de salvar
+    $valor_produto = str_replace(['R$', ','], ['', '.'], $_POST['valor_produto']);
+    $valor_produto = floatval($valor_produto);
+
     $categoria_produto = $_POST['categoria_produto'];
     $peso_produto = $_POST['peso_produto'];
     $descricao_produto = $_POST['descricao_produto'];
-    $material_produto = $_POST['material_produto'];  // Captura o valor do novo campo
+    $material_produto = $_POST['material_produto'];
 
     // Verificando se o nome do produto já existe
     $sql_check = "SELECT * FROM produtos WHERE nome_produto = ?";
@@ -41,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($result_check->num_rows > 0) {
         echo "Produto com esse nome já existe. Por favor, escolha outro nome.";
-        exit(); // Não executa o resto do código se o produto já existir
+        exit();
     }
 
     // Gerar SKU automaticamente
@@ -64,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    // SQL para inserir o produto, agora incluindo material_produto
+    // SQL para inserir o produto
     $sql = "INSERT INTO produtos (nome_produto, marca_produto, sku_produto, cor_produto, valor_produto, categoria_produto, peso_produto, quantidade_produto, descricao_produto, material_produto, img1_produto, img2_produto, img3_produto, img4_produto, img5_produto) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -80,7 +84,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $peso_produto, 
         $quantidade_produto, 
         $descricao_produto, 
-        $material_produto,  // Adicionado aqui
+        $material_produto,
         $imagens['img1_produto'], 
         $imagens['img2_produto'], 
         $imagens['img3_produto'], 
@@ -91,8 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Executando a consulta
     if ($stmt->execute()) {
         echo "Produto adicionado com sucesso!";
-        // Redirecionar após o envio para evitar o reenvio do formulário
-        header("Location: adicionar-produto.php");
+        header("Location: adicionar-produto.php?success=1");
         exit();
     } else {
         echo "Erro ao adicionar produto: " . $stmt->error;
@@ -102,6 +105,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $conn->close();
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -114,6 +118,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="../css/fixo.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../js/logoempresamain.js" defer></script>
     <script src="../js/modalperfil.js" defer></script>
     <script src="../js/carrosel-home.js" defer></script>
@@ -241,6 +246,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <button type="submit" class="salvar_produto">ADICIONAR PRODUTO</button>
     </div>  
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success" data-bs-dismiss="modal"><i class="bi bi-x"></i></button>
+        </div>
+        <div class="confirmado">
+            <i class="bi bi-patch-check"></i>
+            <p>CADASTRADO!</p>
+        </div>
+    </div>
 </form>
 <div class="menu">
   <input type="checkbox" id="toggle" />
@@ -250,7 +264,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <i class="material-icons md-36 toggleBtn closeBtn">close</i>
     </div>
     <div class="btn">
-        <a href="adicionar-produto.php"><i class="bi bi-plus-circle"></i></a>
+        <a href="sistema_empresarial.php"><i class="bi bi-arrow-left" style="color:black;"></i></a>
     </div>
     <div class="btn"  style="display:none;">
       <i class="material-icons md-36">photo</i>
@@ -292,4 +306,21 @@ document.querySelectorAll('.input-file').forEach(input => {
     });
 });
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('success')) {
+        var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+        successModal.show();
+    }
+});
+</script>
+<script>
+    // Adiciona a classe "ativo" ao ícone após um pequeno delay
+    setTimeout(() => {
+        document.querySelector('.confirmado i').classList.add('ativo');
+    }, 100); // Pequeno atraso para garantir que a transição ocorra
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </html>

@@ -71,7 +71,7 @@ if (isset($nome_partes[1])) {
       <i class="material-icons md-36 toggleBtn closeBtn">close</i>
     </div>
     <div class="btn">
-        <a href="adicionar-produto.php"><i class="bi bi-plus-circle"></i></a>
+        <a href="adicionar-produto.php"><i class="bi bi-plus-circle" style="color:black;"></i></a>
     </div>
     <div class="btn"  style="display:none;">
       <i class="material-icons md-36">photo</i>
