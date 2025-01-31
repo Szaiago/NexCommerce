@@ -15,6 +15,28 @@ $nome_exibido = $nome_partes[0];
 if (isset($nome_partes[1])) {
     $nome_exibido .= " " . $nome_partes[1];
 }
+
+// Configurações do banco de dados
+$host = "localhost";
+$usuario = "root";
+$senha = "";
+$banco = "NextCommerce";
+
+// Criar conexão com o banco de dados
+$conn = new mysqli($host, $usuario, $senha, $banco);
+
+// Verificar se houve erro na conexão
+if ($conn->connect_error) {
+    die("Falha na conexão com o banco de dados: " . $conn->connect_error);
+}
+
+// Configurar charset para evitar problemas com caracteres especiais
+$conn->set_charset("utf8");
+
+// Consulta SQL para obter os produtos
+$sql = "SELECT * FROM produtos";
+$result = $conn->query($sql);
+
 ?>
 
 <!DOCTYPE html>
@@ -108,6 +130,88 @@ if (isset($nome_partes[1])) {
         <div class="indicator" data-slide="2"></div>
     </div>
 </div>
-
+<div class="container-cards">
+    <?php
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+    ?>
+        <div class="card-anuncio">
+            <div class="img-anuncio">
+                <div class="carousel-container">
+                    <div class="carousel-anuncio">
+                        <?php
+                        // Exibe as imagens individualmente, puxando pelo nome de cada coluna
+                        $images = [];
+                        for ($i = 1; $i <= 5; $i++) {
+                            $img = $row["img{$i}_produto"];
+                            if (!empty($img)) {
+                                $images[] = $img;
+                                echo "<img src='$img' alt='Imagem $i'>"; // Limitando a 300px
+                            }
+                        }
+                        ?>
+                    </div>
+                    <div class="carousel-indicators-anuncio">
+                        <?php
+                        // Indicadores de navegação para cada imagem
+                        foreach ($images as $index => $img) {
+                            echo "<div class='indicator-card' data-slide='$index'></div>";
+                        }
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <div class="conteudo-anuncio">
+                <p class="id_produto">ID: <?php echo $row["id_produto"]; ?></p>
+                <p class="nome_produto"><?php echo $row["nome_produto"]; ?></p>
+                <p class="valor_produto">R$ <?php echo number_format($row["valor_produto"], 2, ',', '.'); ?></p>
+                <p class="descricao_produto"><?php echo $row["descricao_produto"]; ?></p>
+                <p class="avaliacao_produto">⭐ <?php echo number_format($row["avaliacao_produto"], 1); ?></p>
+            </div>
+        </div>
+    <?php
+        }
+    } else {
+        echo "<p>Nenhum produto cadastrado.</p>";
+    }
+    ?>
 </body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js"></script>
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('.card-anuncio').forEach(card => {
+                const indicators = card.querySelectorAll('.indicator-card');
+                const carousel = card.querySelector('.carousel-anuncio');
+                let currentIndex = 0;
+                const imageCount = indicators.length;
+
+                function updateCarousel(index) {
+                    const width = card.querySelector('.carousel-anuncio img').clientWidth;
+                    carousel.style.transform = `translateX(-${index * width}px)`;
+                    indicators.forEach((indicator, i) => {
+                        indicator.classList.toggle('active', i === index);
+                    });
+                }
+
+                function nextImage() {
+                    currentIndex = (currentIndex + 1) % imageCount;
+                    updateCarousel(currentIndex);
+                }
+
+                indicators.forEach((indicator, index) => {
+                    indicator.addEventListener('click', () => {
+                        currentIndex = index;
+                        updateCarousel(currentIndex);
+                    });
+                });
+
+                // Inicia a troca automática de imagens a cada 5 segundos
+                setInterval(nextImage, 5000);
+
+                updateCarousel(currentIndex);
+            });
+        });
+  </script>  
 </html>
