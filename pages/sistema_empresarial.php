@@ -138,27 +138,29 @@ $result = $conn->query($sql);
         <div class="card-anuncio">
             <div class="img-anuncio">
                 <div class="carousel-container">
-                    <div class="carousel-anuncio">
-                        <?php
-                        // Exibe as imagens individualmente, puxando pelo nome de cada coluna
-                        $images = [];
-                        for ($i = 1; $i <= 5; $i++) {
-                            $img = $row["img{$i}_produto"];
-                            if (!empty($img)) {
-                                $images[] = $img;
-                                echo "<img src='$img' alt='Imagem $i'>"; // Limitando a 300px
-                            }
-                        }
-                        ?>
-                    </div>
-                    <div class="carousel-indicators-anuncio">
-                        <?php
-                        // Indicadores de navegação para cada imagem
-                        foreach ($images as $index => $img) {
-                            echo "<div class='indicator-card' data-slide='$index'></div>";
-                        }
-                        ?>
-                    </div>
+                <div class="carousel-anuncio">
+    <?php
+    // Exibe as imagens individualmente, puxando pelo nome de cada coluna
+    $images = [];
+    for ($i = 1; $i <= 5; $i++) {
+        $img = $row["img{$i}_produto"];
+        if (!empty($img)) {
+            $images[] = $img;
+            echo "<div class='slide-anuncio'>"; // Container para cada imagem
+            echo "<img class='img-anuncio' src='$img' alt='Imagem $i'>";
+            echo "</div>"; // Fecha o container
+        }
+    }
+    ?>
+</div>
+<div class="carousel-indicators-anuncio">
+    <?php
+    // Indicadores de navegação para cada imagem
+    foreach ($images as $index => $img) {
+        echo "<div class='indicator-card' data-slide='$index'></div>";
+    }
+    ?>
+</div>
                 </div>
             </div>
             <div class="conteudo-anuncio">
