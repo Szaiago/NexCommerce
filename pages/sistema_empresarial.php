@@ -139,15 +139,14 @@ $result = $conn->query($sql);
             <div class="img-anuncio">
                 <div class="carousel-container">
                 <div class="carousel-anuncio">
-    <?php
+                <?php
     // Exibe as imagens individualmente, puxando pelo nome de cada coluna
     $images = [];
     for ($i = 1; $i <= 5; $i++) {
         $img = $row["img{$i}_produto"];
         if (!empty($img)) {
             $images[] = $img;
-            echo "<div class='slide-anuncio'>"; // Container para cada imagem
-            echo "<img class='img-anuncio' src='$img' alt='Imagem $i'>";
+            echo "<div class='slide-anuncio' style='background-image: url(\"$img\");'>"; // Define a imagem como background
             echo "</div>"; // Fecha o container
         }
     }
@@ -182,38 +181,45 @@ $result = $conn->query($sql);
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js"></script>
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
-            document.querySelectorAll('.card-anuncio').forEach(card => {
-                const indicators = card.querySelectorAll('.indicator-card');
-                const carousel = card.querySelector('.carousel-anuncio');
-                let currentIndex = 0;
-                const imageCount = indicators.length;
+document.addEventListener('DOMContentLoaded', (event) => {
+    document.querySelectorAll('.card-anuncio').forEach(card => {
+        const indicators = card.querySelectorAll('.indicator-card');
+        const carousel = card.querySelector('.carousel-anuncio');
+        const slides = card.querySelectorAll('.slide-anuncio');
+        let currentIndex = 0;
+        const slideCount = slides.length;
 
-                function updateCarousel(index) {
-                    const width = card.querySelector('.carousel-anuncio img').clientWidth;
-                    carousel.style.transform = `translateX(-${index * width}px)`;
-                    indicators.forEach((indicator, i) => {
-                        indicator.classList.toggle('active', i === index);
-                    });
-                }
+        function updateCarousel(index) {
+            const width = slides[0].clientWidth;
 
-                function nextImage() {
-                    currentIndex = (currentIndex + 1) % imageCount;
-                    updateCarousel(currentIndex);
-                }
+            // Transição suave usando CSS transitions
+            carousel.style.transition = 'transform 0.5s ease-in-out'; // Adiciona a transição
+            carousel.style.transform = `translateX(-${index * width}px)`;
 
-                indicators.forEach((indicator, index) => {
-                    indicator.addEventListener('click', () => {
-                        currentIndex = index;
-                        updateCarousel(currentIndex);
-                    });
-                });
+            indicators.forEach((indicator, i) => {
+                indicator.classList.toggle('active', i === index);
+            });
 
-                // Inicia a troca automática de imagens a cada 5 segundos
-                setInterval(nextImage, 5000);
 
+            slides[index].style.display = 'block';
+        }
+
+        function nextImage() {
+            currentIndex = (currentIndex + 1) % slideCount;
+            updateCarousel(currentIndex);
+        }
+
+        indicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', () => {
+                currentIndex = index;
                 updateCarousel(currentIndex);
             });
         });
+
+        setInterval(nextImage, 5000);
+
+        updateCarousel(currentIndex);
+    });
+});
   </script>  
 </html>
