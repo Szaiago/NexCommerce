@@ -30,7 +30,10 @@ if (empty($email_usuario) || empty($senha_usuario)) {
 }
 
 // Buscar o usuário no banco de dados
-$stmt = $conn->prepare("SELECT id, nome_usuario, senha_usuario, email_usuario FROM usuario WHERE email_usuario = ?");
+$stmt = $conn->prepare("SELECT id_usuario, nome_usuario, senha_usuario, email_usuario FROM usuario WHERE email_usuario = ?");
+if (!$stmt) {
+    die("Erro na preparação da declaração: " . $conn->error);
+}
 $stmt->bind_param("s", $email_usuario);
 $stmt->execute();
 $stmt->store_result();

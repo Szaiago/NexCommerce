@@ -70,6 +70,7 @@
     height: 450px;
     text-transform: uppercase;
     transition: transform 0.2s;
+    cursor: pointer;
 }
 
 .card-anuncio:hover {
@@ -166,4 +167,25 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+.descricao_produto {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 4.5em; /* 3 linhas com line-height de 1.5em */
+    position: relative;
+    font-size: 11px;
+    text-align: justify;
+}
+
+.descricao_produto::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1em; /* Altura da linha para cobrir a última linha */
+    background: linear-gradient(to top, white, transparent);
 }
