@@ -1,56 +1,31 @@
 <?php
 session_start();
-
 if (!isset($_SESSION['nome_usuario'])) {
     header("Location: ../index.php");
     exit();
 }
 
-// Nome do usuário logado
 $nome_usuario = $_SESSION['nome_usuario'];
-
-// Limitar o nome a duas palavras
 $nome_partes = explode(" ", $nome_usuario);
 $nome_exibido = $nome_partes[0];
 if (isset($nome_partes[1])) {
     $nome_exibido .= " " . $nome_partes[1];
 }
 
-// Configurações do banco de dados
 $host = "localhost";
 $usuario = "root";
 $senha = "";
 $banco = "NextCommerce";
 
-// Criar conexão com o banco de dados
 $conn = new mysqli($host, $usuario, $senha, $banco);
-
-// Verificar se houve erro na conexão
 if ($conn->connect_error) {
     die("Falha na conexão com o banco de dados: " . $conn->connect_error);
 }
 
-// Configurar charset para evitar problemas com caracteres especiais
 $conn->set_charset("utf8");
 
-// Consulta SQL para obter os produtos
 $sql = "SELECT * FROM produtos";
 $result = $conn->query($sql);
-
-// Inicializar variáveis para armazenar os totais
-$total_peso_kg = 0; // Convertido para kg
-$total_quantidade = 0;
-$total_valor = 0;
-
-// Calcular os totais do estoque
-while ($row = $result->fetch_assoc()) {
-    $total_peso_kg += ($row['peso_produto'] * $row['quantidade_produto']) / 1000; // Convertendo de gramas para kg
-    $total_quantidade += $row['quantidade_produto'];
-    $total_valor += $row['valor_produto'] * $row['quantidade_produto'];
-}
-
-// Resetar ponteiro para listar produtos corretamente na tabela
-$result->data_seek(0);
 ?>
 
 <!DOCTYPE html>
@@ -61,7 +36,7 @@ $result->data_seek(0);
     <title>Estoque | NextCommerce</title>
     <link rel="icon" href="../css/images/next1.png" type="image/x-icon">
     <link rel="stylesheet" href="../css/fixo.css">
-    <link rel="stylesheet" href="../css/estoque.css">
+    <link rel="stylesheet" href="../css/editar.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script src="../js/logoempresamain.js" defer></script>
@@ -70,13 +45,29 @@ $result->data_seek(0);
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <script>
-        function updateQuantidade(id, quantidade) {
-            const xhttp = new XMLHttpRequest();
-            xhttp.open("POST", "../functions/update_quantidade.php", true);
-            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhttp.send(`id_produto=${id}&quantidade_produto=${quantidade}`);
+            function abrirModal(id, nome, marca, cor, valor, categoria, peso, material, descricao) {
+        document.getElementById('id_produto').value = id;
+        document.getElementById('nome_produto').value = nome;
+        document.getElementById('marca_produto').value = marca;
+        document.getElementById('cor_produto').value = cor;
+        document.getElementById('valor_produto').value = valor;
+        document.getElementById('categoria_produto').value = categoria;
+        document.getElementById('peso_produto').value = peso;
+        document.getElementById('material_produto').value = material;
+        document.getElementById('descricao_produto').value = descricao;
+        document.getElementById('modal-editar').style.display = 'block';
+    }
+
+    function fecharModal() {
+        document.getElementById('modal-editar').style.display = 'none';
+    }
+
+    function deletarProduto() {
+        let idProduto = document.getElementById('id_produto').value;
+        if (confirm('Tem certeza que deseja deletar este produto?')) {
+            window.location.href = '../functions/delete_produto.php?id=' + idProduto;
         }
-        
+    }
         function filterTable() {
             const input = document.getElementById("pesquisaInput");
             const filter = input.value.toLowerCase();
@@ -153,90 +144,90 @@ $result->data_seek(0);
                 <i class="bi bi-people" style="color:black;"></i></i>
             </div>
             <div class="btn">
-                <a href="editar.php"><i class="bi bi-pencil-square" style="color:black;"></i></a>
+                <a href="estoque.php"><i class="bi bi-box-seam" style="color:black;"></i></a>
             </div>
             <div class="btn">
                 <a href="adicionar-produto.php"><i class="bi bi-plus-circle" style="color:black;"></i></a>
             </div>
         </label>
     </div>
-    <div class="dados-estoque">
-        <div class="alinhar-dados" style="border-radius:5px 0 0 5px;">
-            <h1>PESO</h1>
-            <p><?php echo number_format($total_peso_kg, 2, ',', '.'); ?> kg</p>
-        </div>
-        <div class="alinhar-dados">
-            <p><?php echo $total_quantidade; ?> unidades</p>
-        </div>
-        <div class="alinhar-dados" style="border-radius:0 5px 5px 0;">
-            <p>R$ <?php echo number_format($total_valor, 2, ',', '.'); ?></p>
-        </div>
-    </div>
-    <div class="container-estoque">
-            <input type="text" id="pesquisaInput" onkeyup="filterTable()" placeholder="CONSULTAR">
-            <table id="tabelaProdutos">
-                <thead>
+    <div class="container-editar">
+        <input type="text" id="pesquisaInput" onkeyup="filterTable()" placeholder="CONSULTAR">
+        <table id="tabelaProdutos">
+            <thead>
+                <tr>
+                    <th>ID Produto</th>
+                    <th>Nome Produto</th>
+                    <th>SKU Produto</th>
+                    <th>Peso Produto</th>
+                    <th>Valor Produto</th>
+                    <th>Editar</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while ($row = $result->fetch_assoc()) { ?>
                     <tr>
-                        <th>ID Produto</th>
-                        <th>Nome Produto</th>
-                        <th>SKU Produto</th>
-                        <th>Peso Produto</th>
-                        <th>Valor Produto</th>
-                        <th>Quantidade Produto</th>
+                        <td><?= htmlspecialchars($row['id_produto']) ?></td>
+                        <td><?= htmlspecialchars($row['nome_produto']) ?></td>
+                        <td><?= htmlspecialchars($row['sku_produto']) ?></td>
+                        <td><?= htmlspecialchars($row['peso_produto']) ?></td>
+                        <td>R$ <?= number_format($row['valor_produto'], 2, ',', '.') ?></td>
+                        <td>
+                            <button onclick="abrirModal(
+                                '<?= $row['id_produto'] ?>',
+                                '<?= $row['nome_produto'] ?>',
+                                '<?= $row['sku_produto'] ?>',
+                                '<?= $row['peso_produto'] ?>',
+                                '<?= $row['valor_produto'] ?>',
+                                '<?= $row['quantidade_produto'] ?>'
+                            )">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    while ($row = $result->fetch_assoc()) {
-                        echo "<tr>";
-                        echo "<td>" . htmlspecialchars($row['id_produto']) . "</td>";
-                        echo "<td>" . htmlspecialchars($row['nome_produto']) . "</td>";
-                        echo "<td>" . htmlspecialchars($row['sku_produto']) . "</td>";
-                        echo "<td>" . htmlspecialchars($row['peso_produto']) . "</td>";
-                        echo "<td>R$ " . number_format($row['valor_produto'], 2, ',', '.') . "</td>";
-                        echo "<td><input type='number' value='" . htmlspecialchars($row['quantidade_produto']) . "' onchange='updateQuantidade(" . $row['id_produto'] . ", this.value)'></td>";
-                        echo "</tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
-        </div>
+                <?php } ?>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- MODAL PARA EDIÇÃO -->
+    <div class="modal-editar" id="modal-editar" style="display: none;">
+    <div class="modal-content">
+        <h2>Editar Produto</h2>
+        <form action="../functions/update_produto.php" method="POST">
+            <input type="hidden" id="id_produto" name="id_produto">
+            
+            <label>Nome:</label>
+            <input type="text" id="nome_produto" name="nome_produto" required>
+
+            <label>Marca:</label>
+            <input type="text" id="marca_produto" name="marca_produto" required>
+
+            <label>Cor:</label>
+            <input type="text" id="cor_produto" name="cor_produto" required>
+
+            <label>Valor:</label>
+            <input type="number" step="0.01" id="valor_produto" name="valor_produto" required>
+
+            <label>Categoria:</label>
+            <input type="text" id="categoria_produto" name="categoria_produto" required>
+
+            <label>Peso:</label>
+            <input type="number" step="0.01" id="peso_produto" name="peso_produto" required>
+
+            <label>Material:</label>
+            <input type="text" id="material_produto" name="material_produto" required>
+
+            <label>Descrição:</label>
+            <textarea id="descricao_produto" name="descricao_produto" required></textarea>
+
+            <div class="modal-buttons">
+                <button type="submit">Salvar</button>
+                <button type="button" onclick="fecharModal()">Cancelar</button>
+                <button type="button" class="delete-button" onclick="deletarProduto()">Deletar</button>
+            </div>
+        </form>
+    </div>
+</div>
 </body>
-<script>
-    function atualizarEstoque() {
-        const xhr = new XMLHttpRequest();
-        xhr.open("GET", "../functions/atualizar_estoque.php", true);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                try {
-                    const data = JSON.parse(xhr.responseText);
-                    document.querySelector(".dados-estoque").innerHTML = `
-                       <div class="alinhar-dados">
-                            <h1>PESO</h1>
-                             <p><?php echo number_format($total_peso_kg, 2, ',', '.'); ?> kg</p>
-                        </div>
-                        <div class="alinhar-dados">
-                            <h1>QUANTIDADE</h1>
-                            <p><?php echo $total_quantidade; ?> unidades</p>
-                        </div>
-                        <div class="alinhar-dados">
-                            <h1>VALOR</h1>
-                            <p>R$ <?php echo number_format($total_valor, 2, ',', '.'); ?></p>
-                        </div>
-                    `;
-                } catch (e) {
-                    console.error("Erro ao processar os dados do estoque:", e);
-                }
-            }
-        };
-        xhr.send();
-    }
-
-    // Atualiza a cada 2 segundos (2000ms)
-    setInterval(atualizarEstoque, 2000);
-
-    // Atualiza imediatamente ao carregar a página
-    atualizarEstoque();
-</script>
-
 </html>

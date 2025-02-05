@@ -267,16 +267,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <i class="material-icons md-36">chat_bubble</i>
     </div>
     <div class="btn" >
-        <i class="bi bi-gear"></i>
+        <i class="bi bi-gear" style="color:black;"></i></i>
     </div>
     <div class="btn">
-        <i class="bi bi-people"></i>
+        <i class="bi bi-people" style="color:black;"></i></i>
     </div>
     <div class="btn">
-        <a href="estoque.php"><i class="bi bi-box-seam"></i></a>
+        <a href="estoque.php"><i class="bi bi-box-seam" style="color:black;"></i></a>
     </div>
     <div class="btn">               
-        <i class="bi bi-pencil-square"></i>
+        <a href="editar.php"><i class="bi bi-pencil-square" style="color:black;"></i></a>
     </div>
   </label>
 </div>
