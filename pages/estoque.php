@@ -66,37 +66,10 @@ $result->data_seek(0);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script src="../js/logoempresamain.js" defer></script>
     <script src="../js/modalperfil.js" defer></script>
-    <script src="../js/carrosel-home.js" defer></script>
+    <script src="../js/consultar.js" defer></script>
+    <script src="../js/update-quantida-estoque.js" defer></script>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    <script>
-        function updateQuantidade(id, quantidade) {
-            const xhttp = new XMLHttpRequest();
-            xhttp.open("POST", "../functions/update_quantidade.php", true);
-            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhttp.send(`id_produto=${id}&quantidade_produto=${quantidade}`);
-        }
-        
-        function filterTable() {
-            const input = document.getElementById("pesquisaInput");
-            const filter = input.value.toLowerCase();
-            const table = document.getElementById("tabelaProdutos");
-            const trs = table.getElementsByTagName("tr");
-            
-            for (let i = 1; i < trs.length; i++) {
-                const tds = trs[i].getElementsByTagName("td");
-                let show = false;
-                
-                for (let j = 0; j < tds.length; j++) {
-                    if (tds[j].innerText.toLowerCase().indexOf(filter) > -1) {
-                        show = true;
-                        break;
-                    }
-                }
-                trs[i].style.display = show ? "" : "none";
-            }
-        }
-    </script>
 </head>
 <body>
     <header>
