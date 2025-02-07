@@ -22,6 +22,7 @@ $conn->set_charset("utf8mb4");
 // Verifica se os dados foram enviados via POST
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $id_produto = $_POST['id_produto'] ?? '';
+    $nome_produto = $_POST['nome_produto'] ?? ''; // Adicionado
     $marca = $_POST['marca_produto'] ?? '';
     $cor = $_POST['cor_produto'] ?? '';
     $categoria = $_POST['categoria_produto'] ?? '';
@@ -37,15 +38,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit();
     }
 
-    // Prepara a query de atualização
+    // Prepara a query de atualização (incluindo nome_produto)
     $sql = "UPDATE produtos SET 
+                nome_produto = ?, 
                 marca_produto = ?, 
                 cor_produto = ?, 
                 categoria_produto = ?, 
                 peso_produto = ?, 
                 material_produto = ?, 
                 valor_produto = ?, 
-                descricao_produto = ?
+                descricao_produto = ? 
             WHERE id_produto = ?";
 
     $stmt = $conn->prepare($sql);
@@ -59,8 +61,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $peso = floatval($peso);
     $valor = floatval($valor);
 
-    // Faz o bind dos parâmetros e executa a query
-    $stmt->bind_param("sssssdsi", $marca, $cor, $categoria, $peso, $material, $valor, $descricao, $id_produto);
+    // Faz o bind dos parâmetros e executa a query (adicionando nome_produto)
+    $stmt->bind_param("sssssdssi", $nome_produto, $marca, $cor, $categoria, $peso, $material, $valor, $descricao, $id_produto);
 
     if ($stmt->execute()) {
         $_SESSION['mensagem'] = "<span style='color: green;'>Produto atualizado com sucesso!</span>";
@@ -72,8 +74,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 } else {
     $_SESSION['mensagem'] = "<span style='color: red;'>Método inválido!</span>";
 }
-
-
 
 // Fecha conexão
 $conn->close();
