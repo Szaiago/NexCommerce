@@ -161,13 +161,13 @@ $result = $conn->query($sql);
                                 data-material="<?= htmlspecialchars($row['material_produto'] ?? '') ?>"
                                 data-valor="<?= htmlspecialchars($row['valor_produto'] ?? '') ?>"
                                 data-descricao="<?= htmlspecialchars($row['descricao_produto'] ?? '') ?>">
-                                ABRIR MODAL
+                                <i class="bi bi-pencil-square"></i>
                             </button>
                         </td>
                         <td>
                             <form method="POST" action="">
                                 <input type="hidden" name="id_produto_delete" value="<?= $row['id_produto'] ?>">
-                                <button type="submit">Deletar</button>
+                                <button type="submit" class="delete-produto"><i class="bi bi-x-square"></i></button>
                             </form>
                         </td>
                     </tr>
@@ -178,26 +178,47 @@ $result = $conn->query($sql);
     <div class="modal-editar-item" style="display:none;">
         <div class="modal-editar">
             <form action="../functions/salvar_edicao.php" method="POST">
+                <div class="titulo">
+                    <button type="button" onclick="fecharModal()" class="fechar-modal"><i class="bi bi-x" style="font-size:30px;"></i></button>
+                    <div class="tiutlo-p">
+                        <p>EDITAR PRODUTO</p>
+                    </div>
+                </div>
                 <input type="hidden" id="id_produto" name="id_produto">
-                <label>NOME:</label>
-                <input type="text" id="nome_produto" name="nome_produto" required>
-                <label>Marca:</label>
-                <input type="text" id="marca_produto" name="marca_produto" required>
-                <label>Cor:</label>
-                <input type="text" id="cor_produto" name="cor_produto" required>
-                <label>Categoria:</label>
-                <input type="text" id="categoria_produto" name="categoria_produto" required>
-                <label>Peso:</label>
-                <input type="number" step="0.01" id="peso_produto" name="peso_produto" required>
-                <label>Material:</label>
+                <div class="nome">
+                    <label>NOME:</label>
+                    <input type="text" id="nome_produto" name="nome_produto" required>
+                </div>
+                <div class="info-organizar">  
+                    <div class="marca">
+                        <label>Marca:</label>
+                        <input type="text" id="marca_produto" name="marca_produto" required>
+                    </div>
+                    <div class="cor">
+                        <label>Cor:</label>
+                        <input type="text" id="cor_produto" name="cor_produto" required>
+                    </div>
+                </div>
+                <div class="info-organizar">
+                    <div class="categoria">
+                        <label>Categoria:</label>
+                        <input type="text" id="categoria_produto" name="categoria_produto" required>
+                    </div>
+                    <div class="peso">
+                        <label>Peso:</label>
+                        <input type="number" step="0.01" id="peso_produto" name="peso_produto" required>
+                    </div>
+                </div>
+                    <label>Material:</label>
                 <input type="text" id="material_produto" name="material_produto" required>
                 <label>Valor:</label>
                 <input type="number" step="0.01" id="valor_produto" name="valor_produto" required>
-                <label>Descrição:</label>
-                <textarea id="descricao_produto" name="descricao_produto" required></textarea>
+                <div class="descricao">
+                    <label>Descrição:</label>
+                    <textarea id="descricao_produto" name="descricao_produto" class="descricao_produto" required></textarea>
+                </div>
                 <div class="modal-buttons">
-                    <button type="submit">Salvar</button>
-                    <button type="button" onclick="fecharModal()">Cancelar</button>
+                    <button type="submit" class="salvar_produto">SALVAR</button>
                 </div>
             </form>
         </div>
