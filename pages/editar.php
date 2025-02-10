@@ -20,6 +20,21 @@ if ($conn->connect_error) {
 }
 $conn->set_charset("utf8mb4");
 
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_produto_delete'])) {
+    $id_produto = intval($_POST['id_produto_delete']);
+    $sql_delete = "DELETE FROM produtos WHERE id_produto = ?";
+    $stmt = $conn->prepare($sql_delete);
+    $stmt->bind_param("i", $id_produto);
+    if ($stmt->execute()) {
+        $_SESSION['mensagem'] = "Produto deletado com sucesso!";
+    } else {
+        $_SESSION['mensagem'] = "Erro ao deletar produto.";
+    }
+    $stmt->close();
+    header("Location: editar.php");
+    exit();
+}
+
 $sql = "SELECT * FROM produtos";
 $result = $conn->query($sql);
 ?>
@@ -124,6 +139,7 @@ $result = $conn->query($sql);
                     <th>Peso</th>
                     <th>Valor</th>
                     <th>Editar</th>
+                    <th>deletar</th>
                 </tr>
             </thead>
             <tbody>
@@ -147,6 +163,12 @@ $result = $conn->query($sql);
                                 data-descricao="<?= htmlspecialchars($row['descricao_produto'] ?? '') ?>">
                                 ABRIR MODAL
                             </button>
+                        </td>
+                        <td>
+                            <form method="POST" action="">
+                                <input type="hidden" name="id_produto_delete" value="<?= $row['id_produto'] ?>">
+                                <button type="submit">Deletar</button>
+                            </form>
                         </td>
                     </tr>
                 <?php } ?>
@@ -176,8 +198,6 @@ $result = $conn->query($sql);
                 <div class="modal-buttons">
                     <button type="submit">Salvar</button>
                     <button type="button" onclick="fecharModal()">Cancelar</button>
-                        <input type="hidden" id="id_produto_delete" name="id_produto">
-                        <button type="submit" class="delete-button">Deletar</button>
                 </div>
             </form>
         </div>
@@ -192,20 +212,5 @@ $result = $conn->query($sql);
             document.getElementById("id_produto_delete").value = idProduto; // Para exclusão
         });
     });
-
-    document.querySelector(".delete-button").addEventListener("click", function (event) {
-        event.preventDefault(); // Impede envio automático do formulário
-        let idProduto = document.getElementById("id_produto").value; 
-
-        if (!idProduto) {
-            alert("Erro: ID do produto não definido!");
-            return;
-        }
-
-        if (confirm("Tem certeza que deseja deletar este produto?")) {
-            document.getElementById("deleteForm").submit();
-        }
-    });
-});
 </script>
 </html>
