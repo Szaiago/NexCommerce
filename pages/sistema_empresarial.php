@@ -135,47 +135,48 @@ $result = $conn->query($sql);
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
     ?>
-        <div class="card-anuncio">
-            <div class="img-anuncio">
-                <div class="carousel-container">
-                <div class="carousel-anuncio">
-                <?php
-    // Exibe as imagens individualmente, puxando pelo nome de cada coluna
-    $images = [];
-    for ($i = 1; $i <= 5; $i++) {
-        $img = $row["img{$i}_produto"];
-        if (!empty($img)) {
-            $images[] = $img;
-            echo "<div class='slide-anuncio' style='background-image: url(\"$img\");'>"; // Define a imagem como background
-            echo "</div>"; // Fecha o container
-        }
-    }
-    ?>
-</div>
-<div class="carousel-indicators-anuncio">
-    <?php
-    // Indicadores de navegação para cada imagem
-    foreach ($images as $index => $img) {
-        echo "<div class='indicator-card' data-slide='$index'></div>";
-    }
-    ?>
-</div>
+        <a href="produto.php?id=<?php echo $row['id_produto']; ?>" class="card-link">
+            <div class="card-anuncio">
+                <div class="img-anuncio">
+                    <div class="carousel-container">
+                        <div class="carousel-anuncio">
+                            <?php
+                            $images = [];
+                            for ($i = 1; $i <= 5; $i++) {
+                                $img = $row["img{$i}_produto"];
+                                if (!empty($img)) {
+                                    $images[] = $img;
+                                    echo "<div class='slide-anuncio' style='background-image: url(\"$img\");'></div>";
+                                }
+                            }
+                            ?>
+                        </div>
+                        <div class="carousel-indicators-anuncio">
+                            <?php
+                            foreach ($images as $index => $img) {
+                                echo "<div class='indicator-card' data-slide='$index'></div>";
+                            }
+                            ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="conteudo-anuncio">
+                    <p class="id_produto">ID: <?php echo $row["id_produto"]; ?></p>
+                    <p class="nome_produto"><?php echo $row["nome_produto"]; ?></p>
+                    <p class="valor_produto">R$ <?php echo number_format($row["valor_produto"], 2, ',', '.'); ?></p>
+                    <p class="descricao_produto"><?php echo $row["descricao_produto"]; ?></p>
+                    <p class="avaliacao_produto">⭐ <?php echo number_format($row["avaliacao_produto"], 1); ?></p>
                 </div>
             </div>
-            <div class="conteudo-anuncio">
-                <p class="id_produto">ID: <?php echo $row["id_produto"]; ?></p>
-                <p class="nome_produto"><?php echo $row["nome_produto"]; ?></p>
-                <p class="valor_produto">R$ <?php echo number_format($row["valor_produto"], 2, ',', '.'); ?></p>
-                <p class="descricao_produto"><?php echo $row["descricao_produto"]; ?></p>
-                <p class="avaliacao_produto">⭐ <?php echo number_format($row["avaliacao_produto"], 1); ?></p>
-            </div>
-        </div>
+        </a>
     <?php
         }
     } else {
         echo "<p>Nenhum produto cadastrado.</p>";
     }
     ?>
+</div>
+
 </body>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js"></script>
