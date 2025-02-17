@@ -68,7 +68,7 @@ if ($produto === null && count($produtos) > 0) {
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick-theme.min.css"/>
     <script src="../js/logoempresamain.js" defer></script>
     <script src="../js/modalperfil.js" defer></script>
-    <script src="../js/carrosel-home.js" defer></script>
+    <script src="../js/mascarainputs.js" defer></script>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </head>
@@ -165,6 +165,14 @@ if ($produto === null && count($produtos) > 0) {
         </p>
         <p class="descricao"><?php echo htmlspecialchars($produto['descricao_produto']); ?></p>
         <button class="botao-carrinho">ADICIONAR AO CARRINHO</button>
+        <div class="calcular-frete">
+    <p>CALCULAR FRETE:</p>
+    <div class="div-calcular">
+        <input type="text" id="cep-cliente" class="calcular-frete-text" placeholder="Digite seu CEP">
+        <button class="calcular" onclick="calcularFrete()">CALCULAR</button>
+    </div>
+    <p id="resultado-frete"></p>
+</div>
     </div>
     <?php else: ?>
         <p>Nenhum produto selecionado.</p>
@@ -172,9 +180,9 @@ if ($produto === null && count($produtos) > 0) {
 </div>
 
     </div>
-    
-
-    <!-- Container dos Cards (lista de produtos) -->
+    <div class="subtitulo">
+        <p>PODE INTERESSAR:</p>
+    </div>
     <div class="container-cards">
         <?php
         if (count($produtos) > 0) {
@@ -275,6 +283,48 @@ $(document).ready(function(){
   });
 });
 </script>
+<script>
+function calcularFrete() {
+    var cep = document.getElementById("cep-cliente").value.replace(/\D/g, '');
+
+    if (cep.length < 8) {
+        alert("Digite um CEP válido!");
+        return;
+    }
+
+    // Consultar o ViaCEP para obter o estado (UF)
+    fetch(`https://viacep.com.br/ws/${cep}/json/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.erro) {
+                document.getElementById("resultado-frete").innerText = "CEP inválido!";
+                return;
+            }
+
+            var uf = data.uf; // Estado (ex: "SC", "SP", "RJ")
+
+            var formData = new FormData();
+            formData.append("uf", uf);
+
+            return fetch("../functions/calcular_frete.php", {
+                method: "POST",
+                body: formData
+            });
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data) {
+                document.getElementById("resultado-frete").innerText = 
+                    "Destino: " + data.estado + " | Frete: " + data.frete;
+            }
+        })
+        .catch(error => {
+            console.error("Erro ao calcular frete:", error);
+            document.getElementById("resultado-frete").innerText = "Erro ao calcular o frete!";
+        });
+}
+</script>
+
 
 </body>
 </html>
