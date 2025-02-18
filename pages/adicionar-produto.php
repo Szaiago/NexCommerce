@@ -21,6 +21,19 @@ if ($conn->connect_error) {
     die("Falha na conexão: " . $conn->connect_error);
 }
 
+// Contando os itens no carrinho
+$user_id = $_SESSION['id_usuario']; // ID do usuário logado
+$sql_carrinho = "SELECT SUM(quantidade) as total_itens FROM carrinho WHERE id_usuario = ?";
+$stmt_carrinho = $conn->prepare($sql_carrinho);
+if ($stmt_carrinho === false) {
+    die("Erro na preparação da consulta do carrinho: " . $conn->error);
+}
+$stmt_carrinho->bind_param("i", $user_id);
+$stmt_carrinho->execute();
+$result_carrinho = $stmt_carrinho->get_result();
+$row_carrinho = $result_carrinho->fetch_assoc();
+$total_itens_carrinho = $row_carrinho['total_itens'];
+
 // Variável para armazenar a mensagem de status
 $mensagem = '';
 
@@ -105,6 +118,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -134,7 +148,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
             <div class="options">
                 <div class="favoritos">
-                    <i class="bi bi-heart"></i>
+                    <i class="bi bi-bag" style="font-size:22px;"></i>
+                    <?php if ($total_itens_carrinho > 0): ?>
+                        <span class="badge"><?php echo $total_itens_carrinho; ?></span> <!-- Exibe o número de itens -->
+                    <?php endif; ?>
                 </div>
                 <div class="noti">
                     <i class="bi bi-bell"></i>

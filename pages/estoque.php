@@ -51,7 +51,29 @@ while ($row = $result->fetch_assoc()) {
 
 // Resetar ponteiro para listar produtos corretamente na tabela
 $result->data_seek(0);
+
+// Obtém o ID do usuário logado
+$user_id = $_SESSION['id_usuario']; // Supondo que o ID do usuário está armazenado na sessão
+
+// Consulta SQL para contar os itens no carrinho (calculando quantidade total de cada produto)
+$sql_carrinho = "SELECT SUM(quantidade) as total_itens FROM carrinho WHERE id_usuario = ?";
+$stmt = $conn->prepare($sql_carrinho);
+
+if ($stmt === false) {
+    // Exibe um erro caso a preparação da consulta falhe
+    die("Erro na preparação da consulta: " . $conn->error);
+}
+
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result_carrinho = $stmt->get_result();
+$row_carrinho = $result_carrinho->fetch_assoc();
+$total_itens_carrinho = $row_carrinho['total_itens'];
+
+// Fechar a conexão
+$conn->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -81,7 +103,10 @@ $result->data_seek(0);
             </div>
             <div class="options">
                 <div class="favoritos">
-                    <i class="bi bi-heart"></i>
+                    <i class="bi bi-bag" style="font-size:22px;"></i>
+                    <?php if ($total_itens_carrinho > 0): ?>
+                        <span class="badge"><?php echo $total_itens_carrinho; ?></span> <!-- Exibe o número de itens -->
+                    <?php endif; ?>
                 </div>
                 <div class="noti">
                     <i class="bi bi-bell"></i>

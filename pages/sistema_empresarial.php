@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+// Verificando se o usuário está logado
 if (!isset($_SESSION['nome_usuario'])) {
     header("Location: ../index.php");
     exit();
@@ -32,6 +33,19 @@ if ($conn->connect_error) {
 
 // Configurar charset para evitar problemas com caracteres especiais
 $conn->set_charset("utf8");
+
+// Contando os itens no carrinho
+$user_id = $_SESSION['id_usuario']; // ID do usuário logado
+$sql_carrinho = "SELECT SUM(quantidade) as total_itens FROM carrinho WHERE id_usuario = ?";
+$stmt_carrinho = $conn->prepare($sql_carrinho);
+if ($stmt_carrinho === false) {
+    die("Erro na preparação da consulta do carrinho: " . $conn->error);
+}
+$stmt_carrinho->bind_param("i", $user_id);
+$stmt_carrinho->execute();
+$result_carrinho = $stmt_carrinho->get_result();
+$row_carrinho = $result_carrinho->fetch_assoc();
+$total_itens_carrinho = $row_carrinho['total_itens'];
 
 // Consulta SQL para obter os produtos
 $sql = "SELECT * FROM produtos";
@@ -66,7 +80,10 @@ $result = $conn->query($sql);
             </div>
             <div class="options">
                 <div class="favoritos">
-                    <i class="bi bi-heart"></i>
+                    <i class="bi bi-bag" style="font-size:22px;"></i>
+                    <?php if ($total_itens_carrinho > 0): ?>
+                        <span class="badge"><?php echo $total_itens_carrinho; ?></span> <!-- Exibe o número de itens -->
+                    <?php endif; ?>
                 </div>
                 <div class="noti">
                     <i class="bi bi-bell"></i>

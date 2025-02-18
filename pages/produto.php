@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+// Verifica se o usuário está logado
 if (!isset($_SESSION['nome_usuario'])) {
     header("Location: ../index.php");
     exit();
@@ -33,7 +34,7 @@ $result = $conn->query($sql);
 $produtos = [];
 if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-         $produtos[] = $row;
+        $produtos[] = $row;
     }
 }
 
@@ -42,17 +43,41 @@ $produto = null;
 if (isset($_GET['id'])) {
     $id = intval($_GET['id']);
     foreach ($produtos as $p) {
-         if ($p['id_produto'] == $id) {
-             $produto = $p;
-             break;
-         }
+        if ($p['id_produto'] == $id) {
+            $produto = $p;
+            break;
+        }
     }
 }
+
 // Se nenhum produto foi selecionado ou encontrado, usa o primeiro (caso haja)
 if ($produto === null && count($produtos) > 0) {
     $produto = $produtos[0];
 }
+
+// Obtém o ID do usuário logado
+$user_id = $_SESSION['id_usuario']; // Supondo que o ID do usuário está armazenado na sessão
+
+// Consulta SQL para contar os itens no carrinho (calculando quantidade total de cada produto)
+$sql = "SELECT SUM(quantidade) as total_itens FROM carrinho WHERE id_usuario = ?";
+$stmt = $conn->prepare($sql);
+
+if ($stmt === false) {
+    // Exibe um erro caso a preparação da consulta falhe
+    die("Erro na preparação da consulta: " . $conn->error);
+}
+
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
+$total_itens_carrinho = $row['total_itens'];
+
+// Fechar a conexão
+$conn->close();
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -81,8 +106,11 @@ if ($produto === null && count($produtos) > 0) {
                 </div>
             </div>
             <div class="options">
-                <div class="favoritos">
-                    <i class="bi bi-heart"></i>
+            <div class="favoritos">
+                    <i class="bi bi-bag" style="font-size:22px;"></i>
+                    <?php if ($total_itens_carrinho > 0): ?>
+                        <span class="badge"><?php echo $total_itens_carrinho; ?></span> <!-- Exibe o número de itens -->
+                    <?php endif; ?>
                 </div>
                 <div class="noti">
                     <i class="bi bi-bell"></i>
@@ -164,15 +192,15 @@ if ($produto === null && count($produtos) > 0) {
             <span class="pix">no Pix</span>
         </p>
         <p class="descricao"><?php echo htmlspecialchars($produto['descricao_produto']); ?></p>
-        <button class="botao-carrinho">ADICIONAR AO CARRINHO</button>
+        <button class="botao-carrinho" id="adicionar-carrinho" data-produto-id="<?php echo $produto['id_produto']; ?>">ADICIONAR AO CARRINHO</button>
         <div class="calcular-frete">
-    <p>CALCULAR FRETE:</p>
-    <div class="div-calcular">
-        <input type="text" id="cep-cliente" class="calcular-frete-text" placeholder="Digite seu CEP">
-        <button class="calcular" onclick="calcularFrete()">CALCULAR</button>
-    </div>
-    <p id="resultado-frete"></p>
-</div>
+            <p>CALCULAR FRETE:</p>
+            <div class="div-calcular">
+                <input type="text" id="cep-cliente" class="calcular-frete-text" placeholder="Digite seu CEP">
+                <button class="calcular" onclick="calcularFrete()">CALCULAR</button>
+            </div>
+        <p id="resultado-frete"></p>
+        </div>
     </div>
     <?php else: ?>
         <p>Nenhum produto selecionado.</p>
@@ -324,7 +352,35 @@ function calcularFrete() {
         });
 }
 </script>
+<script>document.getElementById("adicionar-carrinho").addEventListener("click", function() {
+    var produtoId = this.getAttribute("data-produto-id");
+    var quantidade = 1; // Exemplo, você pode adicionar um campo para o usuário inserir a quantidade
+    
+    // Enviar via AJAX para o PHP
+    var formData = new FormData();
+    formData.append("id_produto", produtoId);
+    formData.append("quantidade", quantidade);
+    
+    fetch("../functions/adicionar_carrinho.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => {
+        console.error("Erro:", error);
+        alert("Erro ao adicionar o produto ao carrinho.");
+    });
+});
 
+</script>
 
 </body>
 </html>
+
