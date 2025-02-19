@@ -1,0 +1,82 @@
+.container-perfil {
+    width: 90vw;
+    height: 60vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    border: 1px solid white;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 3vh;
+}
+.perfil-header {
+    width: 50%;
+    height: 95%;
+    padding: 5px;
+    border-right: 1px solid rgb(192, 192, 192);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.perfil-iniciais {
+    width: 350px;
+    height: 400px;
+    background-color: rgb(122, 122, 122);
+    color: white;
+    font-size: 80px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    box-shadow: 0 0 5px black;
+}
+
+.dados-perfil {
+    width: 50%;
+    height: 95%;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.id-usuario {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.nome-usuario {
+    font-size: 28px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.dados {
+    width: 100%;
+    border-bottom: 1px solid rgb(192, 192, 192);
+}
+
+.dados-usuario {
+    margin-top:20px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.email-usuario {
+    margin-top:20px;
+    font-size: 16px;
+    color: #000000;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
