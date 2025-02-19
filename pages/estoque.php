@@ -112,7 +112,7 @@ $conn->close();
                     <i class="bi bi-bell"></i>
                 </div>
                 <div class="perfil" id="perfil">
-                    <a href="perfil.php" class="perfil"><i class="bi bi-person"></i></a>
+                <a href="perfil.php" class="perfil"><i class="bi bi-person"></i></a>
                 </div>
             </div>
         </div>

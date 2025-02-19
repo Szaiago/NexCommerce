@@ -58,6 +58,18 @@
     gap: 20px;
     margin: 20px 0;
     text-transform: uppercase;
+    animation: slideFromBottom 1s ease-out forwards;
+}
+
+@keyframes slideFromBottom {
+    from {
+        transform: translateY(100vh);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 .card-anuncio {

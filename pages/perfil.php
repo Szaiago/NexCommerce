@@ -78,6 +78,26 @@ $iniciais = strtoupper(substr($nome_partes[0], 0, 1));
 if (isset($nome_partes[1])) {
     $iniciais .= strtoupper(substr($nome_partes[1], 0, 1));
 }
+
+$user_id = $_SESSION['id_usuario']; // Supondo que o ID do usuário está armazenado na sessão
+
+// Consulta SQL para contar os itens no carrinho (calculando quantidade total de cada produto)
+$sql_carrinho = "SELECT SUM(quantidade) as total_itens FROM carrinho WHERE id_usuario = ?";
+$stmt = $conn->prepare($sql_carrinho);
+
+if ($stmt === false) {
+    // Exibe um erro caso a preparação da consulta falhe
+    die("Erro na preparação da consulta: " . $conn->error);
+}
+
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result_carrinho = $stmt->get_result();
+$row_carrinho = $result_carrinho->fetch_assoc();
+$total_itens_carrinho = $row_carrinho['total_itens'];
+
+// Fechar a conexão
+$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">

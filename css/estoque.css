@@ -4,8 +4,18 @@
     margin-right: auto;
     width: 90%;
     height: auto;
-
+    animation: slideFromLeft 0.8s ease-out forwards;
 }
+
+@keyframes slideFromLeft {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -81,6 +91,7 @@ input[type="number"]:focus {
     flex-direction: row;
     justify-content: flex-end;
     align-items: center;
+    animation: slideFromLeft 0.8s ease-out forwards;
 }
 .alinhar-dados {
     display: flex;

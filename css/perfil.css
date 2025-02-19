@@ -10,7 +10,20 @@
     margin-left: auto;
     margin-right: auto;
     margin-top: 3vh;
+    animation: slideFromLeft 0.8s ease-out forwards;
 }
+
+@keyframes slideFromLeft {
+    from {
+        transform: translatey(100vh);
+        opacity: 0;
+    }
+    to {
+        transform: translatey(0);
+        opacity: 1;
+    }
+}
+
 .perfil-header {
     width: 50%;
     height: 95%;
