@@ -34,7 +34,6 @@ if ($conn->connect_error) {
 // Configurar charset para evitar problemas com caracteres especiais
 $conn->set_charset("utf8");
 
-
 // Contando os itens no carrinho
 $user_id = $_SESSION['id_usuario']; // ID do usuário logado
 $sql_carrinho = "SELECT SUM(quantidade) as total_itens FROM carrinho WHERE id_usuario = ?";
@@ -62,6 +61,9 @@ if (!$stmt) {
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
+
+// Definindo o número total de itens no carrinho
+$total_itens_carrinho = 0;
 if ($result_carrinho) {
     $row_carrinho = $result_carrinho->fetch_assoc();
     $total_itens_carrinho = $row_carrinho['total_itens'] ?? 0; // Se for NULL, define como 0
@@ -71,7 +73,55 @@ if ($result_carrinho) {
 
 $stmt_carrinho->close();
 
+// Fetch cart products and calculate the total price
+$total_compra = 0;
+$sql_produtos_carrinho = "SELECT p.valor_produto, c.quantidade 
+                          FROM carrinho c 
+                          INNER JOIN produtos p ON c.id_produto = p.id_produto 
+                          WHERE c.id_usuario = ?";
+$stmt_produtos_carrinho = $conn->prepare($sql_produtos_carrinho);
+$stmt_produtos_carrinho->bind_param("i", $user_id);
+$stmt_produtos_carrinho->execute();
+$result_produtos_carrinho = $stmt_produtos_carrinho->get_result();
 
+// Calculate total value of the products in the cart
+while ($row_produto = $result_produtos_carrinho->fetch_assoc()) {
+    $total_compra += $row_produto['valor_produto'] * $row_produto['quantidade'];
+}
+
+// Tabela de valores do frete por estado
+$valoresFrete = [
+    "SC" => 10.00, "PR" => 12.00, "RS" => 15.00,
+    "SP" => 18.00, "RJ" => 22.00, "MG" => 25.00,
+    "ES" => 28.00, "BA" => 30.00, "PE" => 35.00,
+    "CE" => 38.00, "GO" => 32.00, "DF" => 33.00,
+    "MT" => 40.00, "MS" => 38.00, "PA" => 42.00,
+    "AM" => 45.00, "MA" => 39.00, "PI" => 36.00,
+    "RO" => 44.00, "AC" => 50.00, "RR" => 55.00,
+    "AP" => 48.00, "AL" => 37.00, "SE" => 35.00,
+    "PB" => 39.00, "RN" => 40.00, "TO" => 43.00
+];
+
+// Consultando os dados de entrega na tabela dados_adicionais
+$sql_dados_entrega = "SELECT * FROM dados_adicionais WHERE id_usuario = ?";
+$stmt_dados_entrega = $conn->prepare($sql_dados_entrega);
+$stmt_dados_entrega->bind_param("i", $user_id);
+$stmt_dados_entrega->execute();
+$result_dados_entrega = $stmt_dados_entrega->get_result();
+
+// Verificando se há dados de entrega cadastrados
+$dados_entrega = $result_dados_entrega->fetch_assoc();
+
+$stmt_dados_entrega->close();
+
+// Determinando o valor do frete com base no estado
+$frete = 0;
+if ($dados_entrega && isset($valoresFrete[$dados_entrega['estado']])) {
+    $frete = $valoresFrete[$dados_entrega['estado']];
+}
+
+// Calculando o valor total final (produtos + frete)
+$total_final = $total_compra + $frete;
 
 ?>
 
@@ -84,7 +134,7 @@ $stmt_carrinho->close();
     <link rel="icon" href="../css/images/next1.png" type="image/x-icon">
     <link rel="stylesheet" href="../css/fixo.css">
     <link rel="stylesheet" href="../css/carrinho.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script src="../js/logoempresamain.js" defer></script>
     <script src="../js/modalperfil.js" defer></script>
@@ -187,60 +237,54 @@ $stmt_carrinho->close();
     <?php endif; ?>
 </div>
 <div class="container-finalizar">
-    <?php
-    // Fetch cart products and calculate the total price
-$total_compra = 0;
-$sql_produtos_carrinho = "SELECT p.preco_produto, c.quantidade 
-                          FROM carrinho c 
-                          INNER JOIN produtos p ON c.id_produto = p.id_produto 
-                          WHERE c.id_usuario = ?";
-$stmt_produtos_carrinho = $conn->prepare($sql_produtos_carrinho);
-$stmt_produtos_carrinho->bind_param("i", $user_id);
-$stmt_produtos_carrinho->execute();
-$result_produtos_carrinho = $stmt_produtos_carrinho->get_result();
-
-// Calculate total value of the products in the cart
-while ($row_produto = $result_produtos_carrinho->fetch_assoc()) {
-    $total_compra += $row_produto['preco_produto'] * $row_produto['quantidade'];
-}
-
-// Calculate the freight (you can replace this with real logic, for now it's a placeholder)
-$frete = 20.00; // Example value, can be based on location or other factors
-
-// Calculate total final (product total + freight)
-$total_final = $total_compra + $frete;
-
-    ?>
-    <h2>Finalizar Compra</h2>
-    
-    <div class="dados-entrega">
-        <h3>Endereço de Entrega</h3>
-        <?php if ($dados_entrega): ?>
-            <p><strong>CEP:</strong> <?php echo htmlspecialchars($dados_entrega['cep']); ?></p>
-            <p><strong>Estado:</strong> <?php echo htmlspecialchars($dados_entrega['estado']); ?></p>
-            <p><strong>Cidade:</strong> <?php echo htmlspecialchars($dados_entrega['cidade']); ?></p>
-            <p><strong>Bairro:</strong> <?php echo htmlspecialchars($dados_entrega['bairro']); ?></p>
-            <p><strong>Rua:</strong> <?php echo htmlspecialchars($dados_entrega['rua']); ?></p>
-            <p><strong>Complemento:</strong> <?php echo htmlspecialchars($dados_entrega['complemento']); ?></p>
-        <?php else: ?>
-            <p>Dados de entrega não cadastrados.</p>
-        <?php endif; ?>
+    <div class="titulo-finalizar">
+        <h2>FINALIZAR COMPRA</h2>
     </div>
+        <div class="dados-entrega">
+            <h3>Endereço de Entrega</h3>
+            <?php if ($dados_entrega): ?>
+                <p><strong>CEP:</strong> <?php echo htmlspecialchars($dados_entrega['cep']); ?></p>
+                <p><strong>Estado:</strong> <?php echo htmlspecialchars($dados_entrega['estado']); ?></p>
+                <p><strong>Cidade:</strong> <?php echo htmlspecialchars($dados_entrega['cidade']); ?></p>
+                <p><strong>Bairro:</strong> <?php echo htmlspecialchars($dados_entrega['bairro']); ?></p>
+                <p><strong>Rua:</strong> <?php echo htmlspecialchars($dados_entrega['rua']); ?></p>
+                <p><strong>Complemento:</strong> <?php echo htmlspecialchars($dados_entrega['complemento']); ?></p>
+            <?php else: ?>
+                <p>Dados de entrega não cadastrados.</p>
+            <?php endif; ?>
+        </div>
 
-    <div class="resumo-compra">
-        <h3>Resumo da Compra</h3>
-        <p><strong>Total dos produtos:</strong> R$ <?php echo number_format($total_compra, 2, ',', '.'); ?></p>
-        <p><strong>Frete:</strong> R$ <?php echo number_format($frete, 2, ',', '.'); ?></p>
-        <hr>
-        <p><strong>Total a pagar:</strong> R$ <?php echo number_format($total_final, 2, ',', '.'); ?></p>
+        <div class="resumo-compra">
+            <h3>Resumo da Compra</h3>
+            <p><strong>Total dos produtos:</strong> R$ <span id="total-produtos"><?php echo number_format($total_compra, 2, ',', '.'); ?></span></p>
+            <p><strong>Frete:</strong> R$ <span id="frete"><?php echo number_format($frete, 2, ',', '.'); ?></span></p>
+            <hr>
+            <p style="font-size: 18px; margin-top: 10px;"><strong>Total a pagar:</strong> R$ <span id="total-pagar"><?php echo number_format($total_final, 2, ',', '.'); ?></span></p>
+        </div>
+        <form method="POST" action="../functions/finalizar_compra.php">
+            <input type="hidden" name="user_id" value="<?php echo $user_id; ?>"> <!-- ID do usuário -->
+            <input type="hidden" name="total_final" value="<?php echo $total_final; ?>"> <!-- Total final da compra -->
+            <button class="finalizar-compra">FINALIZAR COMPRA</button>
+        </form>
     </div>
-
-    <button class="finalizar-compra">Finalizar Compra</button>
-</div>
-
-</div>
 </body>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js"></script>
     <script src="../js/carrinho.js"></script>
+    <script>
+        function atualizarValores() {
+            $.ajax({
+                url: '../functions/atualizar_valores.php', // Crie esse arquivo para calcular os valores atualizados
+                method: 'GET',
+                success: function(response) {
+                    var dados = JSON.parse(response);
+                    $('#total-produtos').text(dados.total_produtos);
+                    $('#frete').text(dados.frete);
+                    $('#total-pagar').text(dados.total_pagar);
+                }
+            });
+        }
+
+        setInterval(atualizarValores, 2000); // Atualiza a cada 2 segundos
+    </script>
 </html>
