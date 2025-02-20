@@ -71,6 +71,8 @@ if ($result_carrinho) {
 
 $stmt_carrinho->close();
 
+
+
 ?>
 
 <!DOCTYPE html>
@@ -163,7 +165,9 @@ $stmt_carrinho->close();
     <?php if ($result->num_rows > 0): ?>
         <?php while ($row = $result->fetch_assoc()): ?>
             <div class="item-carrinho" data-id="<?php echo $row['id_carrinho']; ?>">
-                <img src="../images/<?php echo htmlspecialchars($row['img1_produto']); ?>" alt="Produto">
+                <div class="img-produto">
+                    <img src="../images/<?php echo htmlspecialchars($row['img1_produto']); ?>" alt="Produto">
+                </div>
                 <div class="info-produto">
                     <h3><?php echo htmlspecialchars($row['nome_produto']); ?></h3>
                     <p><?php echo htmlspecialchars($row['descricao_produto']); ?></p>
@@ -174,7 +178,7 @@ $stmt_carrinho->close();
                     <button class="aumentar" data-id="<?php echo $row['id_carrinho']; ?>">+</button>
                 </div>
                 <button class="remover-item" data-id="<?php echo $row['id_carrinho']; ?>">
-                    <i class="bi bi-trash"></i>
+                    <i class="bi bi-x"></i>
                 </button>
             </div>
         <?php endwhile; ?>
@@ -182,7 +186,59 @@ $stmt_carrinho->close();
         <p>Seu carrinho está vazio.</p>
     <?php endif; ?>
 </div>
+<div class="container-finalizar">
+    <?php
+    // Fetch cart products and calculate the total price
+$total_compra = 0;
+$sql_produtos_carrinho = "SELECT p.preco_produto, c.quantidade 
+                          FROM carrinho c 
+                          INNER JOIN produtos p ON c.id_produto = p.id_produto 
+                          WHERE c.id_usuario = ?";
+$stmt_produtos_carrinho = $conn->prepare($sql_produtos_carrinho);
+$stmt_produtos_carrinho->bind_param("i", $user_id);
+$stmt_produtos_carrinho->execute();
+$result_produtos_carrinho = $stmt_produtos_carrinho->get_result();
 
+// Calculate total value of the products in the cart
+while ($row_produto = $result_produtos_carrinho->fetch_assoc()) {
+    $total_compra += $row_produto['preco_produto'] * $row_produto['quantidade'];
+}
+
+// Calculate the freight (you can replace this with real logic, for now it's a placeholder)
+$frete = 20.00; // Example value, can be based on location or other factors
+
+// Calculate total final (product total + freight)
+$total_final = $total_compra + $frete;
+
+    ?>
+    <h2>Finalizar Compra</h2>
+    
+    <div class="dados-entrega">
+        <h3>Endereço de Entrega</h3>
+        <?php if ($dados_entrega): ?>
+            <p><strong>CEP:</strong> <?php echo htmlspecialchars($dados_entrega['cep']); ?></p>
+            <p><strong>Estado:</strong> <?php echo htmlspecialchars($dados_entrega['estado']); ?></p>
+            <p><strong>Cidade:</strong> <?php echo htmlspecialchars($dados_entrega['cidade']); ?></p>
+            <p><strong>Bairro:</strong> <?php echo htmlspecialchars($dados_entrega['bairro']); ?></p>
+            <p><strong>Rua:</strong> <?php echo htmlspecialchars($dados_entrega['rua']); ?></p>
+            <p><strong>Complemento:</strong> <?php echo htmlspecialchars($dados_entrega['complemento']); ?></p>
+        <?php else: ?>
+            <p>Dados de entrega não cadastrados.</p>
+        <?php endif; ?>
+    </div>
+
+    <div class="resumo-compra">
+        <h3>Resumo da Compra</h3>
+        <p><strong>Total dos produtos:</strong> R$ <?php echo number_format($total_compra, 2, ',', '.'); ?></p>
+        <p><strong>Frete:</strong> R$ <?php echo number_format($frete, 2, ',', '.'); ?></p>
+        <hr>
+        <p><strong>Total a pagar:</strong> R$ <?php echo number_format($total_final, 2, ',', '.'); ?></p>
+    </div>
+
+    <button class="finalizar-compra">Finalizar Compra</button>
+</div>
+
+</div>
 </body>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js"></script>
