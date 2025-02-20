@@ -103,10 +103,11 @@ $conn->close();
             </div>
             <div class="options">
                 <div class="favoritos">
-                    <i class="bi bi-bag" style="font-size:22px;"></i>
+                    <a href="carrinho.php" class="favoritos"><i class="bi bi-bag" style="font-size:22px;"></i>
                     <?php if ($total_itens_carrinho > 0): ?>
                         <span class="badge"><?php echo $total_itens_carrinho; ?></span> <!-- Exibe o número de itens -->
                     <?php endif; ?>
+                    </a>
                 </div>
                 <div class="noti">
                     <i class="bi bi-bell"></i>

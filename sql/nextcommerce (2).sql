@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 18-Fev-2025 às 01:14
+-- Tempo de geração: 19-Fev-2025 às 23:36
 -- Versão do servidor: 10.4.32-MariaDB
 -- versão do PHP: 8.0.30
 
@@ -42,11 +42,35 @@ CREATE TABLE `carrinho` (
 --
 
 INSERT INTO `carrinho` (`id_carrinho`, `id_usuario`, `id_produto`, `quantidade`, `preco`, `img_produto`, `data_adicao`) VALUES
-(2, 1, 9, 4, 799.99, '../images/img1_1739149532.png', '2025-02-18 00:01:08'),
 (3, 1, 3, 1, 799.99, '../images/img1_1738633898.png', '2025-02-18 00:01:22'),
 (5, 3, 6, 1, 999.99, '../images/img1_1738634990.png', '2025-02-18 00:11:14'),
 (6, 1, 6, 1, 999.99, '../images/img1_1738634990.png', '2025-02-18 00:12:30'),
 (7, 1, 5, 1, 999.99, '../images/img1_1738634434.png', '2025-02-18 00:12:44');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `dados_adicionais`
+--
+
+CREATE TABLE `dados_adicionais` (
+  `id` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `cpf` varchar(14) NOT NULL,
+  `cep` varchar(9) NOT NULL,
+  `rua` varchar(255) DEFAULT NULL,
+  `estado` varchar(2) NOT NULL,
+  `cidade` varchar(100) NOT NULL,
+  `bairro` varchar(100) NOT NULL,
+  `complemento` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Extraindo dados da tabela `dados_adicionais`
+--
+
+INSERT INTO `dados_adicionais` (`id`, `id_usuario`, `cpf`, `cep`, `rua`, `estado`, `cidade`, `bairro`, `complemento`) VALUES
+(1, 1, '096.473.229-76', '88310-693', 'Rua Jaime Fernandes Vieira', 'SC', 'Itajaí', 'Cordeiros', '205 Bloco D');
 
 -- --------------------------------------------------------
 
@@ -82,7 +106,7 @@ CREATE TABLE `produtos` (
 INSERT INTO `produtos` (`id_produto`, `nome_produto`, `marca_produto`, `sku_produto`, `cor_produto`, `valor_produto`, `categoria_produto`, `peso_produto`, `quantidade_produto`, `descricao_produto`, `material_produto`, `img1_produto`, `img2_produto`, `img3_produto`, `img4_produto`, `img5_produto`, `created_at`, `avaliacao_produto`) VALUES
 (3, 'NIKE DUNK LOW PHOTON DUST', 'NIKE', 'SKU_67A172AAB4623', 'cinza', 799.99, 'roupas', 750.00, 10, 'Tênis Dunk Low Photon Dust\r\n\r\nEnvolva-se no estilo e conforto com o Tênis Dunk Low Photon Dust. Este modelo clássico da Nike combina o icônico design do Dunk com um toque moderno na cor \"Photon Dust\". Feito com materiais premium, o cabedal em couro garante durabilidade e um visual sofisticado. A entressola acolchoada proporciona conforto durante o dia todo, seja para um passeio casual ou para destacar-se no seu look diário.\r\n\r\nDesign Elegante: Cores suaves em \"Photon Dust\" que elevam qualquer visual.\r\n\r\nConforto Excepcional: Entressola acolchoada para suporte e conforto.\r\n\r\nDurabilidade: Cabedal em couro premium para maior resistência.\r\n\r\nVersatilidade: Perfeito para uso casual ou para completar um look mais sofisticado.\r\n\r\nAdicione um toque de elegância e modernidade ao seu guarda-roupa com o Tênis Dunk Low Photon Dust, a escolha ideal para quem busca estilo e conforto em um só produto.', 'COURO', '../images/img1_1738633898.png', '../images/img2_1738633898.png', '../images/img3_1738633898.png', '../images/img4_1738633898.png', '../images/img5_1738633898.png', '2025-02-04 01:51:38', NULL),
 (5, 'NIKE Dunk Low SE Monsoon Blue', 'NIKE', 'SKU_67A174C246F71', 'azul', 999.99, 'roupas', 750.00, 10, 'Dunk Low SE Monsoon Blue\r\n\r\nEleve seu estilo com o deslumbrante Dunk Low SE Monsoon Blue. Este modelo especial da Nike combina o design clássico do Dunk com um toque moderno e vibrante na cor \"Monsoon Blue\". Feito com materiais de alta qualidade, o cabedal em couro proporciona durabilidade e um visual sofisticado. A entressola acolchoada garante conforto durante todo o dia, enquanto as cores vibrantes adicionam um toque de ousadia ao seu look.\r\n\r\nDesign Moderno: Cores vibrantes em \"Monsoon Blue\" para um visual deslumbrante.\r\n\r\nConforto Superior: Entressola acolchoada para suporte e conforto durante todo o dia.\r\n\r\nDurabilidade: Cabedal em couro premium para maior resistência.\r\n\r\nVersatilidade: Ideal para uso casual ou para destacar-se em qualquer ocasião.\r\n\r\nAdicione um toque de modernidade e ousadia ao seu guarda-roupa com o Dunk Low SE Monsoon Blue, a escolha perfeita para quem busca estilo e conforto em um só produto.', 'ALCÃNTARA', '../images/img1_1738634434.png', '../images/img2_1738634434.png', '../images/img3_1738634434.png', '../images/img4_1738634434.png', '../images/img5_1738634434.png', '2025-02-04 02:00:34', NULL),
-(6, 'NIKE DUNK LOW REDWOOD', 'NIKE', 'SKU_67A176EE8469F', 'vermelho', 999.99, 'roupas', 750.00, 600, 'Dunk Low Redwood\r\n\r\nDescubra a sofisticação e o estilo rústico do Dunk Low Redwood. Este modelo da Nike combina o design clássico do Dunk com um toque natural e elegante na cor \"Redwood\". Feito com materiais de alta qualidade, o cabedal em couro proporciona durabilidade e um visual sofisticado. A entressola acolchoada oferece conforto durante todo o dia, tornando este tênis perfeito para qualquer ocasião, seja um passeio casual ou um evento especial.\r\n\r\nDesign Elegante: Cores quentes em \"Redwood\" que trazem um visual rústico e sofisticado.\r\n\r\nConforto Excepcional: Entressola acolchoada para suporte e conforto durante todo o dia.\r\n\r\nDurabilidade: Cabedal em couro premium para maior resistência.\r\n\r\nVersatilidade: Ideal para uso casual ou para completar um look mais elegante.\r\n\r\nAdicione um toque de elegância rústica ao seu guarda-roupa com o Dunk Low Redwood, a escolha perfeita para quem busca estilo e conforto em um só produto.', 'COURO', '../images/img1_1738634990.png', '../images/img2_1738634990.png', '../images/img3_1738634990.png', '../images/img4_1738634990.png', '../images/img5_1738634990.png', '2025-02-04 02:09:50', 3.70),
+(6, 'NIKE DUNK LOW REDWOOD', 'NIKE', 'SKU_67A176EE8469F', 'vermelho', 999.99, 'roupas', 750.00, 300, 'Dunk Low Redwood\r\n\r\nDescubra a sofisticação e o estilo rústico do Dunk Low Redwood. Este modelo da Nike combina o design clássico do Dunk com um toque natural e elegante na cor \"Redwood\". Feito com materiais de alta qualidade, o cabedal em couro proporciona durabilidade e um visual sofisticado. A entressola acolchoada oferece conforto durante todo o dia, tornando este tênis perfeito para qualquer ocasião, seja um passeio casual ou um evento especial.\r\n\r\nDesign Elegante: Cores quentes em \"Redwood\" que trazem um visual rústico e sofisticado.\r\n\r\nConforto Excepcional: Entressola acolchoada para suporte e conforto durante todo o dia.\r\n\r\nDurabilidade: Cabedal em couro premium para maior resistência.\r\n\r\nVersatilidade: Ideal para uso casual ou para completar um look mais elegante.\r\n\r\nAdicione um toque de elegância rústica ao seu guarda-roupa com o Dunk Low Redwood, a escolha perfeita para quem busca estilo e conforto em um só produto.', 'COURO', '../images/img1_1738634990.png', '../images/img2_1738634990.png', '../images/img3_1738634990.png', '../images/img4_1738634990.png', '../images/img5_1738634990.png', '2025-02-04 02:09:50', 3.70),
 (9, 'ADIDAS ADI 2000', 'ADIDAS', 'SKU_67A950DC880BB', 'branco', 799.99, 'roupas', 1000.00, 100, 'Tênis Adidas ADI 2000 – Estilo Retrô e Conforto Moderno\r\n\r\nO Adidas ADI 2000 é a escolha perfeita para quem busca um visual autêntico e cheio de atitude. Inspirado nos tênis icônicos dos anos 2000, este modelo combina o design retrô com a tecnologia moderna, garantindo conforto e durabilidade para o dia a dia.\r\n\r\nCom um cabedal feito em materiais de alta qualidade, o ADI 2000 oferece um ajuste confortável e seguro. Seu solado robusto proporciona excelente aderência, enquanto a entressola macia absorve impactos, garantindo uma caminhada mais leve e estável.\r\n\r\nSeja para um look casual ou para compor um estilo streetwear autêntico, o Adidas ADI 2000 é o tênis ideal. Adquira o seu agora e traga um toque nostálgico e moderno ao seu visual!', '0', '../images/img1_1739149532.png', '../images/img2_1739149532.png', '../images/img3_1739149532.png', '../images/img4_1739149532.png', '../images/img5_1739149532.png', '2025-02-10 01:05:32', NULL);
 
 -- --------------------------------------------------------
@@ -122,6 +146,13 @@ ALTER TABLE `carrinho`
   ADD KEY `id_produto` (`id_produto`);
 
 --
+-- Índices para tabela `dados_adicionais`
+--
+ALTER TABLE `dados_adicionais`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_usuario` (`id_usuario`);
+
+--
 -- Índices para tabela `produtos`
 --
 ALTER TABLE `produtos`
@@ -146,6 +177,12 @@ ALTER TABLE `carrinho`
   MODIFY `id_carrinho` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
+-- AUTO_INCREMENT de tabela `dados_adicionais`
+--
+ALTER TABLE `dados_adicionais`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT de tabela `produtos`
 --
 ALTER TABLE `produtos`
@@ -167,6 +204,12 @@ ALTER TABLE `usuario`
 ALTER TABLE `carrinho`
   ADD CONSTRAINT `carrinho_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `carrinho_ibfk_2` FOREIGN KEY (`id_produto`) REFERENCES `produtos` (`id_produto`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Limitadores para a tabela `dados_adicionais`
+--
+ALTER TABLE `dados_adicionais`
+  ADD CONSTRAINT `fk_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

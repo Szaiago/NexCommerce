@@ -34,22 +34,42 @@ if ($conn->connect_error) {
 // Configurar charset para evitar problemas com caracteres especiais
 $conn->set_charset("utf8");
 
+
 // Contando os itens no carrinho
 $user_id = $_SESSION['id_usuario']; // ID do usuário logado
 $sql_carrinho = "SELECT SUM(quantidade) as total_itens FROM carrinho WHERE id_usuario = ?";
+
 $stmt_carrinho = $conn->prepare($sql_carrinho);
-if ($stmt_carrinho === false) {
+if (!$stmt_carrinho) {
     die("Erro na preparação da consulta do carrinho: " . $conn->error);
 }
+
 $stmt_carrinho->bind_param("i", $user_id);
 $stmt_carrinho->execute();
 $result_carrinho = $stmt_carrinho->get_result();
-$row_carrinho = $result_carrinho->fetch_assoc();
-$total_itens_carrinho = $row_carrinho['total_itens'];
 
-// Consulta SQL para obter os produtos
-$sql = "SELECT * FROM produtos";
-$result = $conn->query($sql);
+// Buscar os produtos no carrinho
+$sql = "SELECT c.id_carrinho, p.nome_produto, p.descricao_produto, p.img1_produto, c.quantidade 
+        FROM carrinho c
+        INNER JOIN produtos p ON c.id_produto = p.id_produto
+        WHERE c.id_usuario = ?";
+
+$stmt = $conn->prepare($sql);
+if (!$stmt) {
+    die("Erro na preparação da consulta de produtos no carrinho: " . $conn->error);
+}
+
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result_carrinho) {
+    $row_carrinho = $result_carrinho->fetch_assoc();
+    $total_itens_carrinho = $row_carrinho['total_itens'] ?? 0; // Se for NULL, define como 0
+} else {
+    $total_itens_carrinho = 0;
+}
+
+$stmt_carrinho->close();
 
 ?>
 
@@ -61,7 +81,7 @@ $result = $conn->query($sql);
     <title>Home/NextCommerce</title>
     <link rel="icon" href="../css/images/next1.png" type="image/x-icon">
     <link rel="stylesheet" href="../css/fixo.css">
-    <link rel="stylesheet" href="../css/home.css">
+    <link rel="stylesheet" href="../css/carrinho.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script src="../js/logoempresamain.js" defer></script>
@@ -80,10 +100,11 @@ $result = $conn->query($sql);
             </div>
             <div class="options">
                 <div class="favoritos">
-                    <i class="bi bi-bag" style="font-size:22px;"></i>
+                <a href="carrinho.php" class="favoritos"><i class="bi bi-bag" style="font-size:22px;"></i>
                     <?php if ($total_itens_carrinho > 0): ?>
                         <span class="badge"><?php echo $total_itens_carrinho; ?></span> <!-- Exibe o número de itens -->
                     <?php endif; ?>
+                </a>
                 </div>
                 <div class="noti">
                     <i class="bi bi-bell"></i>
@@ -135,8 +156,35 @@ $result = $conn->query($sql);
     </div>
   </label>
 </div>
+<div class="titulo-carrinho">
+    <p>CARRINHO</p>
+</div>
+<div class="container-carrinho">
+    <?php if ($result->num_rows > 0): ?>
+        <?php while ($row = $result->fetch_assoc()): ?>
+            <div class="item-carrinho" data-id="<?php echo $row['id_carrinho']; ?>">
+                <img src="../images/<?php echo htmlspecialchars($row['img1_produto']); ?>" alt="Produto">
+                <div class="info-produto">
+                    <h3><?php echo htmlspecialchars($row['nome_produto']); ?></h3>
+                    <p><?php echo htmlspecialchars($row['descricao_produto']); ?></p>
+                </div>
+                <div class="controle-quantidade">
+                    <button class="diminuir" data-id="<?php echo $row['id_carrinho']; ?>">-</button>
+                    <span class="quantidade"><?php echo $row['quantidade']; ?></span>
+                    <button class="aumentar" data-id="<?php echo $row['id_carrinho']; ?>">+</button>
+                </div>
+                <button class="remover-item" data-id="<?php echo $row['id_carrinho']; ?>">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+        <?php endwhile; ?>
+    <?php else: ?>
+        <p>Seu carrinho está vazio.</p>
+    <?php endif; ?>
+</div>
+
 </body>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js"></script>
-    </script>
+    <script src="../js/carrinho.js"></script>
 </html>
