@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 19-Fev-2025 às 23:36
+-- Tempo de geração: 21-Fev-2025 às 02:27
 -- Versão do servidor: 10.4.32-MariaDB
 -- versão do PHP: 8.0.30
 
@@ -42,10 +42,7 @@ CREATE TABLE `carrinho` (
 --
 
 INSERT INTO `carrinho` (`id_carrinho`, `id_usuario`, `id_produto`, `quantidade`, `preco`, `img_produto`, `data_adicao`) VALUES
-(3, 1, 3, 1, 799.99, '../images/img1_1738633898.png', '2025-02-18 00:01:22'),
-(5, 3, 6, 1, 999.99, '../images/img1_1738634990.png', '2025-02-18 00:11:14'),
-(6, 1, 6, 1, 999.99, '../images/img1_1738634990.png', '2025-02-18 00:12:30'),
-(7, 1, 5, 1, 999.99, '../images/img1_1738634434.png', '2025-02-18 00:12:44');
+(5, 3, 6, 1, 999.99, '../images/img1_1738634990.png', '2025-02-18 00:11:14');
 
 -- --------------------------------------------------------
 
@@ -71,6 +68,49 @@ CREATE TABLE `dados_adicionais` (
 
 INSERT INTO `dados_adicionais` (`id`, `id_usuario`, `cpf`, `cep`, `rua`, `estado`, `cidade`, `bairro`, `complemento`) VALUES
 (1, 1, '096.473.229-76', '88310-693', 'Rua Jaime Fernandes Vieira', 'SC', 'Itajaí', 'Cordeiros', '205 Bloco D');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `itens_pedido`
+--
+
+CREATE TABLE `itens_pedido` (
+  `id_item` int(11) NOT NULL,
+  `id_pedido` int(11) NOT NULL,
+  `id_produto` int(11) NOT NULL,
+  `quantidade` int(11) NOT NULL,
+  `valor_unitario` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `pedidos`
+--
+
+CREATE TABLE `pedidos` (
+  `id_pedido` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `itens_pedido` text NOT NULL,
+  `valor_pedido` decimal(10,2) NOT NULL,
+  `status_pedido` varchar(255) NOT NULL,
+  `cpf` varchar(20) NOT NULL,
+  `cep` varchar(20) NOT NULL,
+  `cidade` varchar(255) NOT NULL,
+  `bairro` varchar(255) NOT NULL,
+  `rua` varchar(255) NOT NULL,
+  `complemento` varchar(255) DEFAULT NULL,
+  `data_pedido` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Extraindo dados da tabela `pedidos`
+--
+
+INSERT INTO `pedidos` (`id_pedido`, `id_usuario`, `itens_pedido`, `valor_pedido`, `status_pedido`, `cpf`, `cep`, `cidade`, `bairro`, `rua`, `complemento`, `data_pedido`) VALUES
+(76, 1, 'NIKE DUNK LOW REDWOOD (2)', 2009.98, 'Aguardando Pagamento', '096.473.229-76', '88310-693', 'Itajaí', 'Cordeiros', 'Rua Jaime Fernandes Vieira', '205 Bloco D', '2025-02-20 21:35:34'),
+(77, 1, 'NIKE DUNK LOW PHOTON DUST (1), NIKE Dunk Low SE Monsoon Blue (1)', 1809.98, 'Aguardando Pagamento', '096.473.229-76', '88310-693', 'Itajaí', 'Cordeiros', 'Rua Jaime Fernandes Vieira', '205 Bloco D', '2025-02-20 22:22:15');
 
 -- --------------------------------------------------------
 
@@ -153,6 +193,20 @@ ALTER TABLE `dados_adicionais`
   ADD KEY `fk_usuario` (`id_usuario`);
 
 --
+-- Índices para tabela `itens_pedido`
+--
+ALTER TABLE `itens_pedido`
+  ADD PRIMARY KEY (`id_item`),
+  ADD KEY `id_pedido` (`id_pedido`),
+  ADD KEY `id_produto` (`id_produto`);
+
+--
+-- Índices para tabela `pedidos`
+--
+ALTER TABLE `pedidos`
+  ADD PRIMARY KEY (`id_pedido`);
+
+--
 -- Índices para tabela `produtos`
 --
 ALTER TABLE `produtos`
@@ -174,13 +228,25 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de tabela `carrinho`
 --
 ALTER TABLE `carrinho`
-  MODIFY `id_carrinho` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_carrinho` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT de tabela `dados_adicionais`
 --
 ALTER TABLE `dados_adicionais`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de tabela `itens_pedido`
+--
+ALTER TABLE `itens_pedido`
+  MODIFY `id_item` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de tabela `pedidos`
+--
+ALTER TABLE `pedidos`
+  MODIFY `id_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
 
 --
 -- AUTO_INCREMENT de tabela `produtos`
@@ -210,6 +276,13 @@ ALTER TABLE `carrinho`
 --
 ALTER TABLE `dados_adicionais`
   ADD CONSTRAINT `fk_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`);
+
+--
+-- Limitadores para a tabela `itens_pedido`
+--
+ALTER TABLE `itens_pedido`
+  ADD CONSTRAINT `itens_pedido_ibfk_1` FOREIGN KEY (`id_pedido`) REFERENCES `pedidos` (`id_pedido`),
+  ADD CONSTRAINT `itens_pedido_ibfk_2` FOREIGN KEY (`id_produto`) REFERENCES `produtos` (`id_produto`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
