@@ -96,7 +96,18 @@ $result_carrinho = $stmt->get_result();
 $row_carrinho = $result_carrinho->fetch_assoc();
 $total_itens_carrinho = $row_carrinho['total_itens'];
 
-// Fechar a conexão
+// Consulta SQL para obter os pedidos do usuário logado
+$sql_pedidos = "SELECT * FROM pedidos WHERE id_usuario = ? ORDER BY data_pedido DESC";
+$stmt_pedidos = $conn->prepare($sql_pedidos);
+if ($stmt_pedidos === false) {
+    die("Erro na preparação da consulta de pedidos: " . $conn->error);
+}
+
+$stmt_pedidos->bind_param("i", $user_id);
+$stmt_pedidos->execute();
+$result_pedidos = $stmt_pedidos->get_result();
+$stmt_pedidos->close();
+
 $conn->close();
 ?>
 <!DOCTYPE html>
@@ -249,7 +260,65 @@ $conn->close();
       </form>
     </div>
   </div>
-  
+  <div class="container-pedidos">
+    <div class="titulo-pedido">  
+      <h2>MEUS PEDIDOS</h2>
+    </div>
+
+  <?php if ($result_pedidos->num_rows > 0): ?>
+  <ul>
+    <?php while ($pedido = $result_pedidos->fetch_assoc()): ?>
+      <div class="pedido">
+        <div class="id-pedido">
+          <p>ID: <?php echo htmlspecialchars($pedido['id_pedido']); ?></p>
+        </div>
+        <div class="itens-pedido">
+          <div class="subtitulo-pedido">
+            <p>ITENS PEDIDO:</p>
+          </div>
+          <p><?php echo htmlspecialchars($pedido['itens_pedido']); ?></p>
+        </div>
+        <div class="valor-pedido">
+          <div class="subtitulo-pedido">
+            <p>VALOR TOTAL:</p>
+          </div>
+          <p>R$ <?php echo number_format($pedido['valor_pedido'], 2, ',', '.'); ?></p>
+        </div>
+        <div class="status-pedido">
+          <div class="subtitulo-pedido">
+            <p>STATUS PEDIDO:</p>
+          </div>
+          <p><?php echo htmlspecialchars($pedido['status_pedido']); ?></p>
+        </div>
+        <div class="endereco-pedido">
+          <div class="subtitulo-pedido">
+            <p>ENDEREÇO:</p>
+          </div>
+          <p>
+            <?php echo htmlspecialchars($pedido['rua']); ?>, 
+            <?php echo htmlspecialchars($pedido['bairro']); ?>, 
+            <?php echo htmlspecialchars($pedido['cidade']); ?> - 
+            <?php echo htmlspecialchars($pedido['cep']); ?><br>
+            <?php echo htmlspecialchars($pedido['complemento']); ?>
+          </p>
+        </div>
+        <div class="data-pedido">
+          <div class="subtitulo-pedido">
+            <p>DATA PEDIDO:</p>
+          </div>
+          <p><?php echo date("d/m/Y H:i", strtotime($pedido['data_pedido'])); ?></p>
+        </div>
+      </div>
+    <?php endwhile; ?>
+  </ul>
+<?php else: ?>
+  <p>Você ainda não fez nenhum pedido.</p>
+<?php endif; ?>
+
+</div>
+
+
+  </div>
   <script>
     // Ao sair do campo CEP, busca os dados via API do ViaCEP e preenche os inputs
     document.getElementById("cep").addEventListener("blur", function(){

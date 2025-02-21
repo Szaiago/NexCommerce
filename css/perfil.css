@@ -171,3 +171,132 @@
     transition: 1s;
     background-color: rgb(83, 152, 255);
   }
+
+  .container-pedidos {
+    width: 90vw;
+    height: auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5vh;
+    margin-bottom: 5vh;
+
+  }
+
+  .titulo-pedido {
+    width: 100%;
+    height: 7vh;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgb(82, 82, 82);
+    font-size: 15px;
+    color: #555;
+    text-transform: uppercase;
+  }
+
+  .pedido {
+    width:100%;
+    height: 15vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgb(82, 82, 82);
+  }
+
+  .id-pedido {
+    width: 15%;
+    height: 12vh;
+    padding: 5px;
+    border-right: 1px solid rgb(82, 82, 82);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    color: #070707;
+    text-transform: uppercase;
+  }
+.subtitulo-pedido {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  margin-bottom: 2vh;
+}
+  .itens-pedido {
+    width:36%;
+    height: 12vh;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: first baseline;
+    align-items: center;
+    font-size: 13px;
+    color: #070707;
+    text-transform: uppercase;
+    text-align: justify;
+    border-right: 1px solid rgb(210, 210, 210);
+  }
+
+  .valor-pedido {
+    width:28%;
+    height: 12vh;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: first baseline;
+    align-items: center;
+    font-size: 13px;
+    color: #070707;
+    text-transform: uppercase;
+    border-right: 1px solid rgb(210, 210, 210);
+  }
+
+  .status-pedido {
+    width:28%;
+    height: 12vh;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: first baseline;
+    align-items: center;
+    font-size: 13px;
+    color: #070707;
+    text-transform: uppercase;
+    border-right: 1px solid rgb(210, 210, 210);
+  }
+
+  .endereco-pedido {
+    width:50%;
+    height: 12vh;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: first baseline;
+    align-items: center;
+    font-size: 13px;
+    color: #070707;
+    text-transform: uppercase;
+    text-align: center;
+    border-right: 1px solid rgb(210, 210, 210);
+  }
+
+  .data-pedido {
+    width:20%;
+    height: 12vh;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: first baseline;
+    align-items: center;
+    font-size: 13px;
+    color: #070707;
+    text-transform: uppercase;
+    text-align: justify;
+  }
