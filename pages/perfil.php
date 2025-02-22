@@ -268,7 +268,7 @@ $conn->close();
   <?php if ($result_pedidos->num_rows > 0): ?>
   <ul>
     <?php while ($pedido = $result_pedidos->fetch_assoc()): ?>
-      <div class="pedido">
+      <div class="pedido" onclick="window.location.href='pedido.php?id=<?php echo $pedido['id_pedido']; ?>'">
         <div class="id-pedido">
           <p>ID: <?php echo htmlspecialchars($pedido['id_pedido']); ?></p>
         </div>
@@ -316,6 +316,7 @@ $conn->close();
 <?php endif; ?>
 
 </div>
+
 
 
   </div>
