@@ -191,30 +191,35 @@ $conn->close();
 </div>
 <div class="container-pedido">
     <div class="titulo-pedido">
-        <p class="info"><strong>ID do Pedido:</strong> <?php echo htmlspecialchars($pedido['id_pedido']); ?></p>
+        <p class="info"><strong>ID do Pedido:<?php echo htmlspecialchars($pedido['id_pedido']); ?></strong> </p>
     </div>
-    <p class="info"><strong>Data do Pedido:</strong> <?php echo date("d/m/Y H:i", strtotime($pedido['data_pedido'])); ?></p>
-    <p class="info"><strong>Status:</strong> <?php echo htmlspecialchars($pedido['status_pedido']); ?></p>
-    <p class="info"><strong>Valor Total:</strong> R$ <?php echo number_format($pedido['valor_pedido'], 2, ',', '.'); ?></p>
-
-    <h3>Itens do Pedido:</h3>
+    <h3 class="titulo-itens-pedido">ITENS DO PEDIDO</h3>
     <div class="itens-container">
         <?php foreach ($produtos_info as $produto): ?>
             <div class="produto">
                 <img src="../images/<?php echo htmlspecialchars($produto['imagem']); ?>" alt="<?php echo htmlspecialchars($produto['nome_original']); ?>">
-                <p><strong><?php echo htmlspecialchars($produto['nome_original']); ?></strong></p>
+                <p class="nome-item"><strong><?php echo htmlspecialchars($produto['nome_original']); ?></strong></p>
             </div>
         <?php endforeach; ?>
     </div>
-
-    <h3>Endereço de Entrega:</h3>
-    <p class="info">
-        <?php echo htmlspecialchars($pedido['rua']); ?>, 
-        <?php echo htmlspecialchars($pedido['bairro']); ?>, 
-        <?php echo htmlspecialchars($pedido['cidade']); ?> - 
-        <?php echo htmlspecialchars($pedido['cep']); ?><br>
-        Complemento: <?php echo htmlspecialchars($pedido['complemento']); ?>
-    </p>
+    <h3 class="titulo-itens-pedido">DADOS PEDIDO</h3>
+    <div class="dados-pedido">
+        <div class="dados">
+            <p class="info"><strong>Data do Pedido:</strong> <?php echo date("d/m/Y H:i", strtotime($pedido['data_pedido'])); ?></p>
+            <p class="info"><strong>Status:</strong> <?php echo htmlspecialchars($pedido['status_pedido']); ?></p>
+            <p class="info"><strong>Valor Total:</strong> R$ <?php echo number_format($pedido['valor_pedido'], 2, ',', '.'); ?></p>
+        </div>
+        <div class="dados2">
+            <h3 class="titulo-endereco">ENDEREÇO DE ENTREGA</h3>
+            <p class="info">
+                <?php echo htmlspecialchars($pedido['rua']); ?>, 
+                <?php echo htmlspecialchars($pedido['bairro']); ?>, 
+                <?php echo htmlspecialchars($pedido['cidade']); ?> - 
+                <?php echo htmlspecialchars($pedido['cep']); ?><br>
+                Complemento: <?php echo htmlspecialchars($pedido['complemento']); ?>
+                </p>
+        </div>
+    </div>
 </div>
 </body>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
